@@ -1,5 +1,5 @@
 package services;
-import models.Account; // to use the class from models package we created in this project
+import models.Account; // to use the class from 'models' package we created in this project
 import java.io.*;
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ public class AccountService {
 
     public AccountService(String fp) {
         this.filePath = fp;
-        loadAccounts();
+        loadAccounts(); // load accounts into the program
     }
     // ### Create and store a new account
     public boolean createAccount(Account account) {
@@ -24,6 +24,10 @@ public class AccountService {
         }
         hmAccounts.put(account.getAccNumber(), account);
         return true;
+    }
+    // Delete account by account number
+    public boolean deleteAccount(String accNumber) {
+        return hmAccounts.remove(accNumber) != null;
     }
     // ### Get a single account by account number
     public Account getAccount(String accNumber) {
