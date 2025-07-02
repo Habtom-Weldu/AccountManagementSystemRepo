@@ -1,13 +1,13 @@
-
+package app;
 import services.AccountService;
 import models.Account;
-import java.time.LocalDate;
+
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
     /* This class:
      - Uses the AccountService for all logic
-     - Loads and saves accounts using FileManager
+     - Loads and saves accounts using app.FileManager
      - Handles menu options cleanly
     */
 

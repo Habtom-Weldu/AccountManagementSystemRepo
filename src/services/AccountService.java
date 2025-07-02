@@ -41,7 +41,7 @@ public class AccountService {
     // ### Save all accounts to file
     public void saveAccounts() {
         try (FileOutputStream fos = new FileOutputStream(filePath);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeInt(hmAccounts.size()); // we want to save the number of accounts at the first
             // position of the file.
             for (Account a : hmAccounts.values()) {
@@ -51,7 +51,8 @@ public class AccountService {
             System.out.println("✅ Accounts saved to file.");
 
         } catch (IOException e) {
-            System.out.println("⚠️ Error saving accounts: " + e.getMessage());
+            System.out.println("❌ Failed to save accounts");
+            e.printStackTrace();
         }
     }
     // Load accounts from file into memory
@@ -59,9 +60,13 @@ public class AccountService {
     private void loadAccounts() {
         File file = new File(filePath);
         if (!file.exists()) {
+            //System.out.println("No accounts file found or file is empty. Starting with an empty list.");
+            System.out.println("No accounts file found ");
             return; // No saved accounts yet
+        } else if (file.length() == 0) {
+            System.out.println("File is empty");
+            return;
         }
-
         try (FileInputStream fis = new FileInputStream(filePath);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
 
@@ -70,9 +75,13 @@ public class AccountService {
                 Account acc = (Account) ois.readObject();
                 hmAccounts.put(acc.getAccNumber(), acc);
             }
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("⚠️ Error loading accounts: " + e.getMessage());
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("⚠️ No data file found at " + filePath + ". Starting with an empty list.");
+        }
+        catch (Exception e) {
+            System.out.println("❌ Error loading accounts from file:");
+            e.printStackTrace(); // 🔍 Full error details
         }
     }
 }

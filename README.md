@@ -8,12 +8,13 @@ The system is modular and follows clean software architecture principles.
 
 ## Project Structure
 src/
-├── Main.java # Main program (menu & user interaction)
-├── FileManager.java # Handles file path management
+├── app/
+│   ├── Main.java # app.Main program (menu & user interaction)
+│   └── FileManager.java # Handles file path management
 ├── models/
-│ └── Account.java # Account data model with fields & accessors
+│   └── Account.java # Account data model with fields & accessors
 ├── services/
-│ └── AccountService.java # Core logic for managing accounts
+│   └── AccountService.java # Core logic for managing accounts
 ---
 ## ✅ Features Implemented
 - Create new bank accounts with required details
@@ -52,8 +53,8 @@ If using command line:
 
 bash
 javac -d out src/**/*.java
-java -cp out Main
-Or open the project in IntelliJ and run Main.java.
+java -cp out app.Main
+Or open the project in IntelliJ and run app.Main.java.
 
 📝 License
 MIT License © 2025 Habtom Hailay
