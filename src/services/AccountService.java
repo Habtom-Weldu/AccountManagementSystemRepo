@@ -1,7 +1,12 @@
 package services;
 import models.Account; // to use the class from 'models' package we created in this project
 import java.io.*;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import database.AccountDBHelper;
+import database.DatabaseManager;
+import database.DatabaseSetup;
 
 /* what will this do?
    - Keeps all account objects in memory (HashMap).
@@ -23,23 +28,89 @@ public class AccountService {
             return false; // Duplicate account number
         }
         hmAccounts.put(account.getAccNumber(), account);
+        //saveAccount(account);
+        database.AccountDBHelper.insertAccount(account);
         return true;
     }
     // Delete account by account number
     public boolean deleteAccount(String accNumber) {
+        database.AccountDBHelper.deleteAccountFromDB(accNumber);
         return hmAccounts.remove(accNumber) != null;
     }
     // ### Get a single account by account number
     public Account getAccount(String accNumber) {
+
         return hmAccounts.get(accNumber);
     }
 
     // ### Get all accounts
     public HashMap<String, Account> getAllAccounts() {
+
         return hmAccounts;
     }
+    /* public boolean saveAccount(Account acc) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            // Check if an account exists
+            String checkSql = "SELECT COUNT(*) FROM accountsTable WHERE accNumber = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setString(1, acc.getAccNumber());
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                System.out.println("Account exist");
+            }
+            else
+            {
+                // Insert
+                String insertSql = """
+                INSERT INTO accountsTable (accNumber, name, balance, email, phoneNumber, accountType)
+                VALUES (?, ?, ?, ?, ?, ?);""";
+                PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+                insertStmt.setString(1, acc.getAccNumber());
+                insertStmt.setString(2, acc.getName());
+                insertStmt.setDouble(3, acc.getBalance());
+                insertStmt.setString(4, acc.getEmail());
+                insertStmt.setString(5, acc.getPhoneNumber());
+                insertStmt.setString(6, acc.getAccountType());
+                insertStmt.executeUpdate();
+            }
+            System.out.println("✅ Account saved.");
+            return true;
+        } catch (SQLException e) {
+            System.err.println("❌ Error saving account: " + e.getMessage());
+            return false;
+        }
+    } */
+    public HashMap<String, Account> loadAccounts() {
+        HashMap<String, Account> accounts = new HashMap<>();
+        String sql = "SELECT * FROM accountsTable;";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Account acc = new Account(
+                        rs.getString("accNumber"),
+                        rs.getString("name"),
+                        rs.getDouble("balance"),
+                        rs.getString("email"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("accountType"),
+                        rs.getInt("isActive") == 1,
+                        LocalDateTime.parse(rs.getString("dateCreated"))
+                );
+                accounts.put(acc.getAccNumber(), acc);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error loading accounts: " + e.getMessage());
+        }
+        return accounts;
+    }
+
+
     // ### Save all accounts to file
-    public void saveAccounts() {
+    /*public void saveAccounts() {
         try (FileOutputStream fos = new FileOutputStream(filePath);
             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             oos.writeInt(hmAccounts.size()); // we want to save the number of accounts at the first
@@ -54,9 +125,9 @@ public class AccountService {
             System.out.println("❌ Failed to save accounts");
             e.printStackTrace();
         }
-    }
+    } */
     // Load accounts from file into memory
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     private void loadAccounts() {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -83,5 +154,5 @@ public class AccountService {
             System.out.println("❌ Error loading accounts from file:");
             e.printStackTrace(); // 🔍 Full error details
         }
-    }
+    }*/
 }

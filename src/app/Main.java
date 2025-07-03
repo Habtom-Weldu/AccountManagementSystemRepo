@@ -2,6 +2,7 @@ package app;
 import services.AccountService;
 import models.Account;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
@@ -12,6 +13,7 @@ public class Main {
     */
 
     public static void main(String[] args) {
+        database.DatabaseSetup.createAccountsTable(); // ✅ Ensure table is created
         //2. we need to define input from the keyboard inside this main method
         Scanner sc = new Scanner(System.in);
         String filePath = FileManager.getFilePath();
@@ -22,10 +24,11 @@ public class Main {
             System.out.println("\n--- Account Management Menu ---");
             System.out.println("1. Create Account");
             System.out.println("2. Delete Account");
-            System.out.println("3. View Account");
-            System.out.println("4. View All Accounts");
-            System.out.println("5. Save Accounts");
-            System.out.println("6. Exit");
+            System.out.println("3. Update Account");
+            System.out.println("4. View Account");
+            System.out.println("5. View All Accounts");
+            System.out.println("6. Save Accounts");
+            System.out.println("7. Exit");
 
             System.out.print("Enter your choice: ");
             choice = sc.nextInt();
@@ -52,15 +55,12 @@ public class Main {
                     System.out.print("Enter Account Type (Savings/Checking): ");
                     String accountType = sc.nextLine();
 
-                    Account newAcc = new Account(accNo, name, balance,
-                    email, phoneNumber, accountType);
-                    newAcc.setEmail(email);
-                    newAcc.setPhoneNumber(phoneNumber);
-                    newAcc.setAccountType(accountType);
+                    Account newAcc = new Account(accNo, name, balance, email, phoneNumber,
+                            accountType);
 
-                    boolean created = accountService.createAccount(newAcc);
+                    boolean created = accountService.createAccount(newAcc); // 🔁 This should handle DB save too
                     if (created) {
-                        System.out.println("✅ Account created successfully.");
+                        //System.out.println("✅ Account created successfully.");
                     } else {
                         System.out.println("⚠️ Account with this number already exists.");
                     }
@@ -68,22 +68,28 @@ public class Main {
 
                 case 2:
                     System.out.print("Enter Account Number to delete: ");
-                    String delAcc = sc.nextLine();
-                    boolean deleted = accountService.deleteAccount(delAcc);
+                    String delAccNum = sc.nextLine();
+                    boolean deleted = accountService.deleteAccount(delAccNum);
                     System.out.println(deleted ? "✅ Account deleted." : "⚠️ Account not found.");
                     break;
 
                 case 3:
+                    System.out.print("Enter Account Number to Update: ");
+                    String updateAccNum = sc.nextLine();
+                    boolean updated = accountService.deleteAccount(updateAccNum);
+                    System.out.println(updated ? "✅ Account Updated." : "⚠️ Account not found.");
+                    break;
+                case 4:
                     System.out.print("Enter Account Number to view: ");
-                    String viewAcc = sc.nextLine();
-                    Account acc = accountService.getAccount(viewAcc);
+                    String viewAccNum = sc.nextLine();
+                    Account acc = accountService.getAccount(viewAccNum);
                     if (acc != null) {
                         System.out.println("\n" + acc);
                     } else {
                         System.out.println("⚠️ Account not found.");
                     }
                     break;
-                case 4:
+                case 5:
                     HashMap<String, Account> allAccounts = accountService.getAllAccounts();
                     if (allAccounts.isEmpty()) {
                         System.out.println("⚠️ No accounts available.");
@@ -93,11 +99,11 @@ public class Main {
                         }
                     }
                     break;
-                case 5:
-                    accountService.saveAccounts();
-                    break;
                 case 6:
-                    accountService.saveAccounts();
+                    //accountService.saveAccount(newAcc);
+                    break;
+                case 7:
+                    //accountService.saveAccount();
                     System.out.println("👋 Exiting program...");
                     break;
                 default:

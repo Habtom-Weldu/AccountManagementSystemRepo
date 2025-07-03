@@ -1,6 +1,8 @@
 package models;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Account implements Serializable {
     // Identity info
     String accNumber;
@@ -12,10 +14,10 @@ public class Account implements Serializable {
     String accountType;
     double balance;
     boolean isActive;
-    LocalDate createdDate;
+    LocalDateTime dateCreated;
     public Account(){}
-    public Account(String accNumber, String name, double balance,
-                   String email, String phoneNumber, String accountType) {
+    public Account(String accNumber, String name, double balance, String email, String phoneNumber,
+                   String accountType) {
         this.accNumber = accNumber;
         this.name = name;
         this.balance = balance;
@@ -23,7 +25,18 @@ public class Account implements Serializable {
         this.phoneNumber = phoneNumber;
         this.accountType = accountType;
         this.isActive = true;
-        this.createdDate = LocalDate.now();
+        this.dateCreated = LocalDateTime.now();
+    }
+    public Account(String accNumber, String name, double balance, String email, String phoneNumber,
+                   String accountType, boolean isActive, LocalDateTime dateCreated) {
+        this.accNumber = accNumber;
+        this.name = name;
+        this.balance = balance;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.accountType = accountType;
+        this.isActive = isActive;
+        this.dateCreated = dateCreated;
     }
     // Getters
     public String getAccNumber() {
@@ -44,11 +57,11 @@ public class Account implements Serializable {
     public String getAccountType() {
         return accountType;
     }
-    public boolean isActive() {
+    public boolean getActive() {
         return isActive;
     }
-    public LocalDate getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getDateCreated() {
+        return dateCreated;
     }
 
     // Setters
@@ -67,8 +80,8 @@ public class Account implements Serializable {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setActive(boolean isActive) {
+        isActive = isActive;
     }
 
     public String toString(){
@@ -79,6 +92,6 @@ public class Account implements Serializable {
                 "\nPhone: " + phoneNumber +
                 "\nType: " + accountType +
                 "\nActive: " + isActive +
-                "\nCreated: " + createdDate;
+                "\nCreated: " + dateCreated;
     }
 }
