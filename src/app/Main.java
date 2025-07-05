@@ -16,9 +16,9 @@ public class Main {
         database.DatabaseSetup.createAccountsTable(); // ✅ Ensure table is created
         //2. we need to define input from the keyboard inside this main method
         Scanner sc = new Scanner(System.in);
-        String filePath = FileManager.getFilePath();
-        AccountService accountService = new AccountService(filePath);
-
+        //String filePath = FileManager.getDatabaseFilePath();
+        //AccountService accountService = new AccountService(filePath);
+        AccountService accountService = new AccountService();
         int choice;
         do {
             System.out.println("\n--- Account Management Menu ---");
@@ -74,10 +74,10 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.print("Enter Account Number to Update: ");
+                    /*System.out.print("Enter Account Number to Update: ");
                     String updateAccNum = sc.nextLine();
-                    boolean updated = accountService.deleteAccount(updateAccNum);
-                    System.out.println(updated ? "✅ Account Updated." : "⚠️ Account not found.");
+                    boolean updated = accountService.updateAccount()(updateAccNum);
+                    System.out.println(updated ? "✅ Account Updated." : "⚠️ Account not found."); */
                     break;
                 case 4:
                     System.out.print("Enter Account Number to view: ");

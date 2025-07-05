@@ -3,6 +3,7 @@ import models.Account; // to use the class from 'models' package we created in t
 import java.io.*;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import database.AccountDBHelper;
 import database.DatabaseManager;
@@ -18,8 +19,11 @@ public class AccountService {
     private HashMap<String, Account> hmAccounts = new HashMap<>();
     private String filePath;
 
-    public AccountService(String fp) {
+    /*public AccountService(String fp) {
         this.filePath = fp;
+        loadAccounts(); // load accounts into the program
+    } */
+    public AccountService() {
         loadAccounts(); // load accounts into the program
     }
     // ### Create and store a new account
@@ -30,23 +34,56 @@ public class AccountService {
         hmAccounts.put(account.getAccNumber(), account);
         //saveAccount(account);
         database.AccountDBHelper.insertAccount(account);
+        //System.out.println("Account inserted into database successfully");
         return true;
     }
     // Delete account by account number
     public boolean deleteAccount(String accNumber) {
-        database.AccountDBHelper.deleteAccountFromDB(accNumber);
+        database.AccountDBHelper.deleteAccountFromDB(accNumber); // delete from database table as well
         return hmAccounts.remove(accNumber) != null;
     }
     // ### Get a single account by account number
     public Account getAccount(String accNumber) {
-
+        //loadAccounts();
+        /* we do not need loadAccounts() method call, coz when we call
+        accountService.getAccount(viewAccNum); we already created an object of AccountService class,
+        and this class is already calling loadAccounts() in its constructor */
         return hmAccounts.get(accNumber);
     }
 
     // ### Get all accounts
     public HashMap<String, Account> getAllAccounts() {
-
+        //loadAccounts();
         return hmAccounts;
+    }
+    public HashMap<String, Account> loadAccounts() {
+        HashMap<String, Account> accounts = new HashMap<>();
+        String sql = "SELECT * FROM accountsTable;";
+
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            assert conn != null; // this requires to Enable Assertions in IntelliJ
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+                DateTimeFormatter myDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                while (rs.next()) {
+                    Account acc = new Account(
+                            rs.getString("accNumber"),
+                            rs.getString("name"),
+                            rs.getDouble("balance"),
+                            rs.getString("email"),
+                            rs.getString("phoneNumber"),
+                            rs.getString("accountType"),
+                            rs.getInt("isActive") == 1,
+                            LocalDateTime.parse(rs.getString("dateCreated"), myDateFormatter)
+                    );
+                    hmAccounts.put(acc.getAccNumber(), acc);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error loading accounts: " + e.getMessage());
+        }
+        return hmAccounts;
+
     }
     /* public boolean saveAccount(Account acc) {
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -81,33 +118,6 @@ public class AccountService {
             return false;
         }
     } */
-    public HashMap<String, Account> loadAccounts() {
-        HashMap<String, Account> accounts = new HashMap<>();
-        String sql = "SELECT * FROM accountsTable;";
-
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                Account acc = new Account(
-                        rs.getString("accNumber"),
-                        rs.getString("name"),
-                        rs.getDouble("balance"),
-                        rs.getString("email"),
-                        rs.getString("phoneNumber"),
-                        rs.getString("accountType"),
-                        rs.getInt("isActive") == 1,
-                        LocalDateTime.parse(rs.getString("dateCreated"))
-                );
-                accounts.put(acc.getAccNumber(), acc);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error loading accounts: " + e.getMessage());
-        }
-        return accounts;
-    }
-
 
     // ### Save all accounts to file
     /*public void saveAccounts() {
