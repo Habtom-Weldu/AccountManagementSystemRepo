@@ -11,6 +11,7 @@ public class InputValidator {
             System.out.print(prompt);
             try {
                 input = Integer.parseInt(scanner.nextLine().trim());
+                //scanner.nextLine(); // clear buffer
                 if (input >= min && input <= max) {
                     return input;
                 } else {
@@ -21,7 +22,39 @@ public class InputValidator {
             }
         }
     }
-
+    // ############
+    public static String readValidName(String prompt) {
+        String input;
+        while (true) {
+            System.out.print(prompt);
+            input = scanner.nextLine().trim();
+            // Basic check: not empty and long enough
+            if (input.isEmpty() || input.length() < 2) {
+                System.out.println("❗ Name must be at least 2 characters.");
+                continue; // continue while loop
+            }
+            // Regex Pattern(regular expression): letters, spaces, hyphens, apostrophes
+            String basicPattern = "^[A-Za-z][A-Za-z\\-' ]{1,49}$"; // Disallowed patterns (consecutive symbols)
+            String[] invalidSequences = {"--", "''", "  ", "-'", "'-", "' ", " -", "''", "--"};
+            if (!input.matches(basicPattern)) {
+                System.out.println("❗ Invalid characters. Start with letters only. Then you can use spaces, hyphens (-), or apostrophes (').");
+                continue; // continue while loop
+            }
+            boolean hasConsecutiveInvalids = false;
+            for (String invalid : invalidSequences) {
+                if (input.contains(invalid)) {
+                    hasConsecutiveInvalids = true;
+                    break;
+                }
+            }
+            if (hasConsecutiveInvalids) {
+                System.out.println("❗ Name contains invalid consecutive symbols.");
+                continue; // continue while loop
+            }
+            return input;
+        }
+    }
+    // ############
     public static double readPositiveDouble(String prompt) {
         double input;
         while (true) {
