@@ -1,14 +1,13 @@
 package app;
+import app.util.InputValidator;
 import services.AccountService;
 import models.Account;
-
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
     /* This class:
      - Uses the AccountService for all logic
-     - Loads and saves accounts using app.FileManager
+     - Loads and saves accounts using app.util.FileManager
      - Handles menu options cleanly
     */
 
@@ -19,9 +18,9 @@ public class Main {
         //String filePath = FileManager.getDatabaseFilePath();
         //AccountService accountService = new AccountService(filePath);
         AccountService accountService = new AccountService();
-        int choice;
+        int menuChoice;
         do {
-            System.out.println("\n--- Account Management Menu ---");
+            System.out.println("\n===== Account Management Menu =====");
             System.out.println("1. Create Account");
             System.out.println("2. Delete Account");
             System.out.println("3. Update Account");
@@ -31,16 +30,16 @@ public class Main {
             System.out.println("7. Exit");
 
             System.out.print("Enter your choice: ");
-            choice = sc.nextInt();
-            sc.nextLine(); // clear buffer
+            menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
+            //sc.nextLine(); // clear buffer
 
-            switch (choice) {
+            switch (menuChoice) {
                 case 1:
                     System.out.print("Enter Account Number: ");
                     String accNo = sc.nextLine();
 
-                    System.out.print("Enter Name: ");
-                    String name = sc.nextLine();
+                    // Call the validated name input method by passing Prompt message
+                    String name = InputValidator.readValidName("Enter customer name: ");
 
                     System.out.print("Enter Balance: ");
                     double balance = sc.nextDouble();
@@ -58,12 +57,13 @@ public class Main {
                     Account newAcc = new Account(accNo, name, balance, email, phoneNumber,
                             accountType);
 
-                    boolean created = accountService.createAccount(newAcc); // 🔁 This should handle DB save too
-                    if (created) {
+                    //boolean created = accountService.createAccount(newAcc); // 🔁 This should handle DB save too
+                    accountService.createAccount(newAcc); // 🔁 This should handle DB save too
+                    /*if (created) {
                         //System.out.println("✅ Account created successfully.");
                     } else {
                         System.out.println("⚠️ Account with this number already exists.");
-                    }
+                    } */
                     break;
 
                 case 2:
@@ -109,6 +109,6 @@ public class Main {
                 default:
                     System.out.println("⚠️ Invalid choice. Try again.");
             }
-        } while (choice != 6);
+        } while (menuChoice != 7);
     }
 }

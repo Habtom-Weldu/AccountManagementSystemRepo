@@ -1,6 +1,8 @@
 package app.util;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InputValidator {
     private static final Scanner scanner = new Scanner(System.in);
@@ -22,34 +24,41 @@ public class InputValidator {
             }
         }
     }
-    // ############
+    // ############ Validate Account number
+
+    // ############ Validate name
     public static String readValidName(String prompt) {
         String input;
+        // Unicode-aware regex: first char is a letter, rest are letters, space, hyphen, apostrophe
+        Pattern namePattern = Pattern.compile("^\\p{L}[\\p{L}\\-' ]*$", Pattern.UNICODE_CHARACTER_CLASS);
+        // Disallowed consecutive symbols
+        String[] invalidSequences = { "--", "''", "  ", "-'", "'-", "' ", " -", " -", "''", "--" };
+
         while (true) {
             System.out.print(prompt);
             input = scanner.nextLine().trim();
-            // Basic check: not empty and long enough
-            if (input.isEmpty() || input.length() < 2) {
-                System.out.println("❗ Name must be at least 2 characters.");
-                continue; // continue while loop
+            // Length check
+            if (input.length() < 2 || input.length() > 70) {
+                System.out.println("❗ Name must be between 2 and 70 characters.");
+                continue;
             }
-            // Regex Pattern(regular expression): letters, spaces, hyphens, apostrophes
-            String basicPattern = "^[A-Za-z][A-Za-z\\-' ]{1,49}$"; // Disallowed patterns (consecutive symbols)
-            String[] invalidSequences = {"--", "''", "  ", "-'", "'-", "' ", " -", "''", "--"};
-            if (!input.matches(basicPattern)) {
-                System.out.println("❗ Invalid characters. Start with letters only. Then you can use spaces, hyphens (-), or apostrophes (').");
-                continue; // continue while loop
+            // Regex check
+            Matcher matcher = namePattern.matcher(input);
+            if (!matcher.matches()) {
+                System.out.println("❗ Name must start with a letter and contain only letters, spaces, hyphens (-), or apostrophes (').");
+                continue;
             }
-            boolean hasConsecutiveInvalids = false;
+            // Check for consecutive invalid patterns
+            boolean hasInvalid = false;
             for (String invalid : invalidSequences) {
                 if (input.contains(invalid)) {
-                    hasConsecutiveInvalids = true;
+                    hasInvalid = true;
                     break;
                 }
             }
-            if (hasConsecutiveInvalids) {
-                System.out.println("❗ Name contains invalid consecutive symbols.");
-                continue; // continue while loop
+            if (hasInvalid) {
+                System.out.println("❗ Name contains invalid consecutive symbols like '--', `''`, or double space.");
+                continue;
             }
             return input;
         }
