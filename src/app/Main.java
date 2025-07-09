@@ -1,7 +1,11 @@
 package app;
 import app.util.InputValidator;
+import database.DatabaseManager;
 import services.AccountService;
 import models.Account;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
@@ -35,12 +39,8 @@ public class Main {
 
             switch (menuChoice) {
                 case 1:
-                    System.out.print("Enter Account Number: ");
-                    String accNo = sc.nextLine();
-
                     // Call the validated name input method by passing Prompt message
                     String name = InputValidator.readValidName("Enter customer name: ");
-
                     System.out.print("Enter Balance: ");
                     double balance = sc.nextDouble();
                     sc.nextLine(); // clear buffer
@@ -53,19 +53,9 @@ public class Main {
 
                     System.out.print("Enter Account Type (Savings/Checking): ");
                     String accountType = sc.nextLine();
-
-                    Account newAcc = new Account(accNo, name, balance, email, phoneNumber,
-                            accountType);
-
-                    //boolean created = accountService.createAccount(newAcc); // 🔁 This should handle DB save too
-                    accountService.createAccount(newAcc); // 🔁 This should handle DB save too
-                    /*if (created) {
-                        //System.out.println("✅ Account created successfully.");
-                    } else {
-                        System.out.println("⚠️ Account with this number already exists.");
-                    } */
+                    // Create the account — all DB logic is inside accountService.createAccount(..) method
+                    accountService.createAccount(name, balance, email, phoneNumber, accountType);
                     break;
-
                 case 2:
                     System.out.print("Enter Account Number to delete: ");
                     String delAccNum = sc.nextLine();
@@ -73,11 +63,11 @@ public class Main {
                     System.out.println(deleted ? "✅ Account deleted." : "⚠️ Account not found.");
                     break;
 
-                case 3:
+                case 3: // Update
                     /*System.out.print("Enter Account Number to Update: ");
                     String updateAccNum = sc.nextLine();
                     boolean updated = accountService.updateAccount()(updateAccNum);
-                    System.out.println(updated ? "✅ Account Updated." : "⚠️ Account not found."); */
+                    System.out.println(updated ? "✅ Account Updated.":"⚠️ Account not found."); */
                     break;
                 case 4:
                     System.out.print("Enter Account Number to view: ");
