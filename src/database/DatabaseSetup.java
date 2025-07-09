@@ -8,16 +8,17 @@ public class DatabaseSetup {
     public static void createAccountsTable() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS accountsTable (
-                accNumber TEXT PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                accNumber UNIQUE NOT NULL,
                 name TEXT NOT NULL,
-                balance REAL NOT NULL,
+                balance REAL NOT NULL DEFAULT 0.0,
                 email TEXT,
                 phoneNumber TEXT,
                 accountType TEXT,
                 isActive INTEGER DEFAULT 1,
                 dateCreated TEXT DEFAULT CURRENT_TIMESTAMP
             );""";
-        try (Connection conn = DatabaseManager.getConnection()) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
             if (conn == null) {
                 System.err.println("❌ Connection is null. Table creation aborted.");
                 return;
@@ -25,7 +26,7 @@ public class DatabaseSetup {
 
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(sql);
-                System.out.println("✅ Table created or already exists.");
+                //System.out.println("✅ Table created or already exists.");
             }
         } catch (SQLException e) {
             e.printStackTrace(); // shows detailed reason
