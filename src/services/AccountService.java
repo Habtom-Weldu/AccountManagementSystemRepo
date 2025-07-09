@@ -1,13 +1,11 @@
 package services;
 import models.Account; // to use the class from 'models' package we created in this project
-import java.io.*;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import database.AccountDBHelper;
+import java.util.Random;
 import database.DatabaseManager;
-import database.DatabaseSetup;
 
 /* what will this do?
    - Keeps all account objects in memory (HashMap).
@@ -26,23 +24,52 @@ public class AccountService {
     public AccountService() {
         loadAccounts(); // load accounts into the program
     }
-    // ### Create and store a new account
-    public boolean createAccount(Account account) {
-        if (hmAccounts.containsKey(account.getAccNumber())) {
-            return false; // Duplicate account number
+
+    // ########### Generate  Account number in order to create an account
+    private static final Random random = new Random();
+    public static String generateUniqueAccountNumber(Connection conn) {
+        String accountNumber;
+        int maxAttempts = 100;
+        for (int i = 0; i < maxAttempts; i++) { // Generate a random 10-digit number
+            accountNumber = String.format("%010d", random.nextLong(1_000_000_000L));
+            if (!accountNumberExistsInDB(conn, accountNumber)) { // Check if it already exists in DB
+                return accountNumber;
+            }
         }
-        hmAccounts.put(account.getAccNumber(), account);
-        //saveAccount(account);
-        database.AccountDBHelper.insertAccount(account);
-        //System.out.println("Account inserted into database successfully");
+        throw new RuntimeException("⚠️ Failed to generate unique account number after " +
+                maxAttempts + " attempts.");
+    }
+    private static boolean accountNumberExistsInDB(Connection conn, String accountNumber) {
+        String query = "SELECT 1 FROM accountsTable WHERE accNumber = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, accountNumber);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next(); // true if record exists
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("❌ DB check failed", e);
+        }
+    }
+    // ### Create and store a new account
+    public boolean createAccount(String name, double balance, String email, String phoneNumber, String accountType) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            String newAccNumber = generateUniqueAccountNumber(conn);
+            Account newAccount = new Account(newAccNumber, name, balance, email, phoneNumber, accountType);
+            // Insert to DB (call DAO or write logic here)
+            database.AccountDBHelper.insertAccount(conn, newAccount);
+            hmAccounts.put(newAccNumber, newAccount); // updating our hash map
+            System.out.println("✅ Account created successfully.");
+        } catch (SQLException e) {
+            System.out.println("❌ Failed to create account: " + e.getMessage());
+        }
         return true;
     }
-    // Delete account by account number
+    // ########### Delete account by account number
     public boolean deleteAccount(String accNumber) {
         database.AccountDBHelper.deleteAccountFromDB(accNumber); // delete from database table as well
         return hmAccounts.remove(accNumber) != null;
     }
-    // ### Get a single account by account number
+    // ########### Get a single account by account number
     public Account getAccount(String accNumber) {
         //loadAccounts();
         /* we do not need loadAccounts() method call, coz when we call
@@ -51,11 +78,12 @@ public class AccountService {
         return hmAccounts.get(accNumber);
     }
 
-    // ### Get all accounts
+    // ########### Get all accounts
     public HashMap<String, Account> getAllAccounts() {
         //loadAccounts();
         return hmAccounts;
     }
+    // ########### Load Accounts into HashMap
     public HashMap<String, Account> loadAccounts() {
         HashMap<String, Account> accounts = new HashMap<>();
         String sql = "SELECT * FROM accountsTable;";
