@@ -21,7 +21,6 @@ public class AccountDBHelper {
                 //System.out.println("✅ Account created and successfully saved. Account No: " + acc.getAccNumber());
                 return true;
         } catch (SQLException e) {
-            //System.err.println("❌ Error saving account: " + e.getMessage());
             // SQLite constraint violation code is "SQLITE_CONSTRAINT" (error code 19)
             if (e.getErrorCode() == 19 || e.getMessage().contains("UNIQUE constraint failed")) {
                 System.out.println("⚠️ Duplicate account number detected. Please try again.");
