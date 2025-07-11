@@ -9,7 +9,7 @@ public class DatabaseSetup {
         String sql = """
                 CREATE TABLE IF NOT EXISTS accountsTable (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                accNumber UNIQUE NOT NULL,
+                accNumber TEXT UNIQUE NOT NULL,
                 name TEXT NOT NULL,
                 balance REAL NOT NULL DEFAULT 0.0,
                 email TEXT,
