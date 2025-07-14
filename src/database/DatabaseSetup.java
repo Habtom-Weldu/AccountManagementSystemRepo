@@ -13,7 +13,7 @@ public class DatabaseSetup {
                 name TEXT NOT NULL,
                 balance REAL NOT NULL DEFAULT 0.0,
                 email TEXT,
-                phoneNumber TEXT,
+                phoneNumber TEXT NOT NULL UNIQUE,
                 accountType TEXT,
                 isActive INTEGER DEFAULT 1,
                 dateCreated TEXT DEFAULT CURRENT_TIMESTAMP
