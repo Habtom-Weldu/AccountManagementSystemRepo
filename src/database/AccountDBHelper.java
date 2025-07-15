@@ -4,8 +4,8 @@ import java.sql.*;
 import database.DatabaseManager;
 public class AccountDBHelper {
     public static boolean insertAccount(Connection conn, Account acc) {
-            // Account exists in DB, is already checked while generating account number in AccountService.java
-                String insertSql = """
+        // Account exists in DB, is already checked while generating account number in AccountService.java
+        String insertSql = """
                 INSERT INTO accountsTable (accNumber, name, balance, email, phoneNumber, accountType)
                 VALUES (?, ?, ?, ?, ?, ?);""";
         try (PreparedStatement pstmt = conn.prepareStatement(insertSql)){
@@ -18,19 +18,20 @@ public class AccountDBHelper {
                 insertStmt.setString(6, acc.getAccountType());
                 // the isActive and dateCreate are defaulted in the database
                 insertStmt.executeUpdate();
-                //System.out.println("✅ Account created and successfully saved. Account No: " + acc.getAccNumber());
+                System.out.println("✅ Account created and successfully saved. Account No: " + acc.getAccNumber());
                 return true;
         } catch (SQLException e) {
             // SQLite constraint violation code is "SQLITE_CONSTRAINT" (error code 19)
-            if (e.getErrorCode() == 19 || e.getMessage().contains("UNIQUE constraint failed")) {
+            if (e.getMessage().contains("UNIQUE constraint failed: accountsTable.accNumber")) {
                 System.out.println("⚠️ Duplicate account number detected. Please try again.");
+            } else if (e.getMessage().contains("UNIQUE constraint failed: accountsTable.phoneNumber")) {
+                System.out.println("⚠️ Duplicate phone number detected. Please try again.");
             } else {
                 System.out.println("❌ Database error: " + e.getMessage());
             }
             return false;
         }
     }
-
     public static boolean deleteAccountFromDB(String accNumber) {
         String sql = "DELETE FROM accountsTable WHERE accNumber = ?";
 
@@ -45,7 +46,6 @@ public class AccountDBHelper {
             return false;
         }
     }
-
     public static boolean updateAccountInDB(Account acc) {
         String sql = """
             UPDATE accountsTable SET name = ?, balance = ?, email = ?,
