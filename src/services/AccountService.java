@@ -50,6 +50,15 @@ public class AccountService {
             throw new RuntimeException("❌ DB check failed", e);
         }
     }
+    // ### Check phone number existence before creating an account with the phone number input
+    public boolean isPhoneNumberExists(Connection conn, String phoneNum) throws SQLException {
+        String query = "SELECT COUNT(*) FROM accountsTable WHERE phoneNumber = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, phoneNum);
+            ResultSet rs = ps.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
     // ### Create and store a new account
     public boolean createAccount(String name, double balance, String email, String phoneNumber, String accountType) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
