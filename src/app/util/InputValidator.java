@@ -2,6 +2,7 @@ package app.util;
 
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,6 +150,28 @@ public class InputValidator {
             } else {
                 System.out.println("⚠️ Invalid email format. Please enter a valid email (e.g., user@example.com).");
             }
+        }
+    }
+    // ############ Read Valid Phone number
+    public static String readValidPhoneNumber(String prompt, Function<String, Boolean> isDuplicateCheck) {
+        String phone;
+        while (true) {
+            System.out.print(prompt);
+            phone = sc.nextLine().trim();
+            if (!phone.startsWith("+") || !phone.substring(1).matches("\\d+")) {
+                System.out.println("⚠️ Invalid format. Must start with '+' and contain only digits.");
+                continue;
+            }
+            int length = phone.length() - 1;
+            if (length < 10 || length > 15) {
+                System.out.println("⚠️ Phone number must be between 10 and 15 digits.");
+                continue;
+            }
+            if (isDuplicateCheck.apply(phone)) {
+                System.out.println("⚠️ Phone number already exists in database.");
+                continue;
+            }
+            return phone;
         }
     }
 
