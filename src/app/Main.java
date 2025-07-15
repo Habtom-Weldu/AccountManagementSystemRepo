@@ -19,8 +19,6 @@ public class Main {
         database.DatabaseSetup.createAccountsTable(); // ✅ Ensure table is created
         //2. we need to define input from the keyboard inside this main method
         Scanner sc = new Scanner(System.in);
-        //String filePath = FileManager.getDatabaseFilePath();
-        //AccountService accountService = new AccountService(filePath);
         AccountService accountService = new AccountService();
         int menuChoice;
         do {
@@ -36,25 +34,24 @@ public class Main {
             System.out.print("Enter your choice: ");
             menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
             //sc.nextLine(); // clear buffer
-
             switch (menuChoice) {
                 case 1:
-                    // Call the validated name input method by passing Prompt message
+                    // Call the validated input methods by passing Prompt message
                     String name = InputValidator.readValidName("Enter customer name: ");
-                    System.out.print("Enter Balance: ");
-                    double balance = sc.nextDouble();
-                    sc.nextLine(); // clear buffer
+                    String email = InputValidator.readValidEmail("Enter Email: ");
 
-                    System.out.print("Enter Email: ");
-                    String email = sc.nextLine();
-
-                    System.out.print("Enter Phone Number: ");
-                    String phoneNumber = sc.nextLine();
-
-                    System.out.print("Enter Account Type (Savings/Checking): ");
-                    String accountType = sc.nextLine();
+                    //System.out.print("Enter Phone Number: ");
+                    //String phoneNumber = sc.nextLine();
+                    String phoneNo = InputValidator.readValidPhoneNumber(
+                            "Enter phone number (international format): ",
+                            Main::checkIfPhoneExists
+                    );
+                    String accountType = InputValidator.readValidAccountType("Enter Account Type " +
+                            "(Savings/Checking/Business): ");
+                    double balance = InputValidator.readBalanceForAccountType("Enter initial balance ",
+                            accountType);
                     // Create the account — all DB logic is inside accountService.createAccount(..) method
-                    accountService.createAccount(name, balance, email, phoneNumber, accountType);
+                    accountService.createAccount(name, balance, email, phoneNo, accountType);
                     break;
                 case 2:
                     System.out.print("Enter Account Number to delete: ");
@@ -100,5 +97,16 @@ public class Main {
                     System.out.println("⚠️ Invalid choice. Try again.");
             }
         } while (menuChoice != 7);
+    }
+
+    // ### check phone number existance
+    private static AccountService accountService = new AccountService();
+    private static boolean checkIfPhoneExists(String phoneNumber) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            return accountService.isPhoneNumberExists(conn, phoneNumber);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true; // Treat error as duplicate for safety
+        }
     }
 }
