@@ -104,13 +104,17 @@ public class AccountService {
         }
         return hmAccounts;
     }
-    public boolean updateAccountInteractive(String accNumber) {
-        Account existingAcc = getAccountByNumber(accNumber);
+    // ### Update Account Interactive code
+    public boolean updateAccountInteractive() {
+        String accNumberToUpdate = InputValidator.readValidAccNumber("Enter account number to update: ");
+        Account existingAcc = getAccountByNumber(accNumberToUpdate);
         if (existingAcc == null) {
             System.out.println("❌ Account not found.");
             return false;
         }
         System.out.println("Leave fields empty to keep current values.");
+        // Account Type
+        System.out.println("Account type:" + existingAcc.getAccountType() + " (not editable)");
         // Name
         existingAcc.setName(InputValidator.readValidNameOrDefault("Enter new name",
                 existingAcc.getName()));
@@ -118,15 +122,13 @@ public class AccountService {
         existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
                 existingAcc.getBalance()));
         // Email
-        existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter Email",
+        existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter new Email",
                 existingAcc.getEmail()));
         // Phone
-        String phone = InputValidator.readValidPhoneNumberOrDefault("Enter phone number (" +
+        String phone = InputValidator.readValidPhoneNumberOrDefault("Enter new phone number (" +
             existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(),
             ExistenceChecker::checkIfPhoneExists);
           existingAcc.setPhoneNumber(phone);
-        // Account Type
-        System.out.print("Account type:" + existingAcc.getAccountType() + " (not editable)");
         // Update Account
         return updateAccount(existingAcc);
     }
