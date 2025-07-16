@@ -44,14 +44,13 @@ public class AccountDBHelper {
         }
     }
     public static boolean updateAccount(Account updatedAccount, Connection conn) throws SQLException {
-        String sql = "UPDATE accountsTable SET name = ?, balance = ?, email = ?, phoneNumber = ?, accountType = ? WHERE accNumber = ?";
+        String sql = "UPDATE accountsTable SET name = ?, balance = ?, email = ?, phoneNumber = ? WHERE accNumber = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, updatedAccount.getName());
             ps.setDouble(2, updatedAccount.getBalance());
             ps.setString(3, updatedAccount.getEmail());
             ps.setString(4, updatedAccount.getPhoneNumber());
-            ps.setString(5, updatedAccount.getAccountType());
-            ps.setString(6, updatedAccount.getAccNumber());
+            ps.setString(5, updatedAccount.getAccNumber());
             return ps.executeUpdate() > 0;
         }
     }

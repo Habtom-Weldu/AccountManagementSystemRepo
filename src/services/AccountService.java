@@ -19,7 +19,7 @@ import app.util.InputValidator;
  */
 public class AccountService {
     private static final Scanner sc = new Scanner(System.in);
-    private HashMap<String, Account> hmAccounts = new HashMap<>();
+    private final HashMap<String, Account> hmAccounts = new HashMap<>();
     private String filePath;
 
     /*public AccountService(String fp) {
@@ -79,9 +79,7 @@ public class AccountService {
     }
     // ########### Load Accounts into HashMap
     public HashMap<String, Account> loadAccounts() {
-        HashMap<String, Account> accounts = new HashMap<>();
         String sql = "SELECT * FROM accountsTable;";
-
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
             assert conn != null; // this requires to Enable Assertions in IntelliJ
             try (Statement stmt = conn.createStatement();
@@ -128,10 +126,8 @@ public class AccountService {
             ExistenceChecker::checkIfPhoneExists);
           existingAcc.setPhoneNumber(phone);
         // Account Type
-        System.out.print("Enter account type (" + existingAcc.getAccountType() + "): ");
-        String acctType = sc.nextLine().trim();
-        if (!acctType.isEmpty())
-            existingAcc.setAccountType(acctType);
+        System.out.print("Account type:" + existingAcc.getAccountType() + " (not editable)");
+        // Update Account
         return updateAccount(existingAcc);
     }
     public boolean updateAccount(Account account) {
