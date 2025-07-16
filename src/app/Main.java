@@ -50,25 +50,21 @@ public class Main {
                     accountService.createAccount(name, initialBalance, email, phoneNo, accountType);
                     break;
                 case 2:
-                    System.out.print("Enter Account Number to delete: ");
-                    String delAccNum = sc.nextLine();
-                    boolean deleted = accountService.deleteAccount(delAccNum);
+                    String accNumberToDelete = InputValidator.readValidAccNumber("Enter Account Number to delete: ");
+                    boolean deleted = accountService.deleteAccount(accNumberToDelete);
                     System.out.println(deleted ? "✅ Account deleted." : "⚠️ Account not found.");
                     break;
 
                 case 3: // Update
-                    System.out.print("Enter account number to update: ");
-                    String accNo = sc.nextLine().trim();
-                    if (accountService.updateAccountInteractive(accNo)) {
+                    if (accountService.updateAccountInteractive()) {
                         System.out.println("✅ Account updated successfully.");
                     } else {
                         System.out.println("⚠️ Account update failed.");
                     }
                     break;
                 case 4:
-                    System.out.print("Enter Account Number to view: ");
-                    String viewAccNum = sc.nextLine();
-                    Account acc = accountService.getAccountByNumber(viewAccNum);
+                    String accNumberToView = InputValidator.readValidAccNumber("Enter Account Number to view: ");
+                    Account acc = accountService.getAccountByNumber(accNumberToView);
                     if (acc != null) {
                         System.out.println("\n" + acc);
                     } else {
