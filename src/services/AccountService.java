@@ -5,7 +5,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Random;
-import database.DatabaseManager;
+import java.util.Scanner;
+import app.util.ExistenceChecker;
+
+import database.*;
+import app.util.InputValidator;
 
 /* what will this do?
    - Keeps all account objects in memory (HashMap).
@@ -14,6 +18,7 @@ import database.DatabaseManager;
    - Cleanly separates logic from your main() class.
  */
 public class AccountService {
+    private static final Scanner sc = new Scanner(System.in);
     private HashMap<String, Account> hmAccounts = new HashMap<>();
     private String filePath;
 
@@ -25,39 +30,19 @@ public class AccountService {
         loadAccounts(); // load accounts into the program
     }
 
-    // ########### Generate  Account number in order to create an account
+    // ########### Generate  Account number inorder to create an account
     private static final Random random = new Random();
     public static String generateUniqueAccountNumber(Connection conn) {
         String accountNumber;
         int maxAttempts = 100;
         for (int i = 0; i < maxAttempts; i++) { // Generate a random 10-digit number
             accountNumber = String.format("%010d", random.nextLong(1_000_000_000L));
-            if (!accountNumberExistsInDB(conn, accountNumber)) { // Check if it already exists in DB
+            if (!ExistenceChecker.checkIfAccountNumberExist(conn, accountNumber)) { // Check if it already exists in DB
                 return accountNumber;
             }
         }
         throw new RuntimeException("⚠️ Failed to generate unique account number after " +
                 maxAttempts + " attempts.");
-    }
-    private static boolean accountNumberExistsInDB(Connection conn, String accountNumber) {
-        String query = "SELECT 1 FROM accountsTable WHERE accNumber = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, accountNumber);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); // true if record exists
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("❌ DB check failed", e);
-        }
-    }
-    // ### Check phone number existence before creating an account with the phone number input
-    public boolean isPhoneNumberExists(Connection conn, String phoneNum) throws SQLException {
-        String query = "SELECT COUNT(*) FROM accountsTable WHERE phoneNumber = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, phoneNum);
-            ResultSet rs = ps.executeQuery();
-            return rs.next() && rs.getInt(1) > 0;
-        }
     }
     // ### Create and store a new account
     public boolean createAccount(String name, double balance, String email, String phoneNumber, String accountType) {
@@ -79,7 +64,7 @@ public class AccountService {
         return hmAccounts.remove(accNumber) != null;
     }
     // ########### Get a single account by account number
-    public Account getAccount(String accNumber) {
+    public Account getAccountByNumber(String accNumber) {
         //loadAccounts();
         /* we do not need loadAccounts() method call, coz when we call
         accountService.getAccount(viewAccNum); we already created an object of AccountService class,
@@ -120,41 +105,43 @@ public class AccountService {
             System.err.println("Error loading accounts: " + e.getMessage());
         }
         return hmAccounts;
-
     }
-    /* public boolean saveAccount(Account acc) {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            // Check if an account exists
-            String checkSql = "SELECT COUNT(*) FROM accountsTable WHERE accNumber = ?";
-            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
-            checkStmt.setString(1, acc.getAccNumber());
-            ResultSet rs = checkStmt.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                System.out.println("Account exist");
-            }
-            else
-            {
-                // Insert
-                String insertSql = """
-                INSERT INTO accountsTable (accNumber, name, balance, email, phoneNumber, accountType)
-                VALUES (?, ?, ?, ?, ?, ?);""";
-                PreparedStatement insertStmt = conn.prepareStatement(insertSql);
-                insertStmt.setString(1, acc.getAccNumber());
-                insertStmt.setString(2, acc.getName());
-                insertStmt.setDouble(3, acc.getBalance());
-                insertStmt.setString(4, acc.getEmail());
-                insertStmt.setString(5, acc.getPhoneNumber());
-                insertStmt.setString(6, acc.getAccountType());
-                insertStmt.executeUpdate();
-            }
-            System.out.println("✅ Account saved.");
-            return true;
-        } catch (SQLException e) {
-            System.err.println("❌ Error saving account: " + e.getMessage());
+    public boolean updateAccountInteractive(String accNumber) {
+        Account existingAcc = getAccountByNumber(accNumber);
+        if (existingAcc == null) {
+            System.out.println("❌ Account not found.");
             return false;
         }
-    } */
+        System.out.println("Leave fields empty to keep current values.");
+        // Name
+        existingAcc.setName(InputValidator.readValidNameOrDefault("Enter new name",
+                existingAcc.getName()));
+        // Balance
+        existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
+                existingAcc.getBalance()));
+        // Email
+        existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter Email",
+                existingAcc.getEmail()));
+        // Phone
+        String phone = InputValidator.readValidPhoneNumberOrDefault("Enter phone number (" +
+            existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(),
+            ExistenceChecker::checkIfPhoneExists);
+          existingAcc.setPhoneNumber(phone);
+        // Account Type
+        System.out.print("Enter account type (" + existingAcc.getAccountType() + "): ");
+        String acctType = sc.nextLine().trim();
+        if (!acctType.isEmpty())
+            existingAcc.setAccountType(acctType);
+        return updateAccount(existingAcc);
+    }
+    public boolean updateAccount(Account account) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            return AccountDBHelper.updateAccount(account, conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // ### Save all accounts to file
     /*public void saveAccounts() {
