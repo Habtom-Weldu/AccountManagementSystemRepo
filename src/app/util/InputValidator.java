@@ -32,14 +32,9 @@ public class InputValidator {
         while (true) {
             System.out.print(prompt);
             input = sc.nextLine().trim();
-            // Length check
-            if (input.length() < 8 || input.length() > 12) {
-                System.out.println("❗ Account number must be between 8 and 12 digits.");
-                continue;
-            }
-            // Digits only check
-            if (!input.matches("\\d+")) {
-                System.out.println("❗ Account number must contain digits only.");
+            // Length and digits only check
+            if (!input.matches("\\d{10}")) { // must be digits only and 10 digits long
+                System.out.println("⚠️ Invalid format. Account number must be 10 digits.");
                 continue;
             }
             return input; // ✅ Valid input
@@ -292,7 +287,7 @@ public class InputValidator {
         double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
         double max = 10_000_000;
         return readDoubleInRangeWithDefault( String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
-                        "current (%.2f): ", min, max, currentBalance), min,max, currentBalance);
+                "current (%.2f): ", min, max, currentBalance), min,max, currentBalance);
     }
     public static double readDoubleInRangeWithDefault(String prompt, double min, double max, double defaultValue) {
         Scanner sc = new Scanner(System.in);
