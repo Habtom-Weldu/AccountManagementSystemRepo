@@ -34,37 +34,25 @@ public class AccountDBHelper {
     }
     public static boolean deleteAccountFromDB(String accNumber) {
         String sql = "DELETE FROM accountsTable WHERE accNumber = ?";
-
         try (Connection conn = DatabaseManager.getDatabaseConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setString(1, accNumber);
             return pstmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             System.err.println("❌ Delete failed: " + e.getMessage());
             return false;
         }
     }
-    public static boolean updateAccountInDB(Account acc) {
-        String sql = """
-            UPDATE accountsTable SET name = ?, balance = ?, email = ?,
-                phoneNumber = ?, accountType = ?, isActive = ?, dateCreated = ? WHERE accNumber = ?;""";
-
-        try (Connection conn = DatabaseManager.getDatabaseConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, acc.getName());
-            pstmt.setDouble(2, acc.getBalance());
-            pstmt.setString(3, acc.getEmail());
-            pstmt.setString(4, acc.getPhoneNumber());
-            pstmt.setString(5, acc.getAccountType());
-            pstmt.setString(6, acc.getAccNumber());
-            return pstmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            System.err.println("❌ Update failed: " + e.getMessage());
-            return false;
+    public static boolean updateAccount(Account updatedAccount, Connection conn) throws SQLException {
+        String sql = "UPDATE accountsTable SET name = ?, balance = ?, email = ?, phoneNumber = ?, accountType = ? WHERE accNumber = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, updatedAccount.getName());
+            ps.setDouble(2, updatedAccount.getBalance());
+            ps.setString(3, updatedAccount.getEmail());
+            ps.setString(4, updatedAccount.getPhoneNumber());
+            ps.setString(5, updatedAccount.getAccountType());
+            ps.setString(6, updatedAccount.getAccNumber());
+            return ps.executeUpdate() > 0;
         }
     }
 }
