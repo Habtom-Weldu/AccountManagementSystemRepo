@@ -1,11 +1,9 @@
 package app;
 import app.util.InputValidator;
-import database.DatabaseManager;
 import services.AccountService;
 import models.Account;
+import app.util.ExistenceChecker;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Scanner;
 public class Main {
@@ -35,23 +33,21 @@ public class Main {
             menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
             //sc.nextLine(); // clear buffer
             switch (menuChoice) {
-                case 1:
+                case 1: // Case Create account
                     // Call the validated input methods by passing Prompt message
                     String name = InputValidator.readValidName("Enter customer name: ");
                     String email = InputValidator.readValidEmail("Enter Email: ");
-
-                    //System.out.print("Enter Phone Number: ");
-                    //String phoneNumber = sc.nextLine();
+                    // Entry for phone number, here we are sending a function a parameter.
                     String phoneNo = InputValidator.readValidPhoneNumber(
                             "Enter phone number (international format): ",
-                            Main::checkIfPhoneExists
+                            ExistenceChecker::checkIfPhoneExists
                     );
                     String accountType = InputValidator.readValidAccountType("Enter Account Type " +
                             "(Savings/Checking/Business): ");
-                    double balance = InputValidator.readBalanceForAccountType("Enter initial balance ",
+                    double initialBalance = InputValidator.readBalanceForAccountType("Enter initial balance ",
                             accountType);
                     // Create the account — all DB logic is inside accountService.createAccount(..) method
-                    accountService.createAccount(name, balance, email, phoneNo, accountType);
+                    accountService.createAccount(name, initialBalance, email, phoneNo, accountType);
                     break;
                 case 2:
                     System.out.print("Enter Account Number to delete: ");
@@ -61,15 +57,18 @@ public class Main {
                     break;
 
                 case 3: // Update
-                    /*System.out.print("Enter Account Number to Update: ");
-                    String updateAccNum = sc.nextLine();
-                    boolean updated = accountService.updateAccount()(updateAccNum);
-                    System.out.println(updated ? "✅ Account Updated.":"⚠️ Account not found."); */
+                    System.out.print("Enter account number to update: ");
+                    String accNo = sc.nextLine().trim();
+                    if (accountService.updateAccountInteractive(accNo)) {
+                        System.out.println("✅ Account updated successfully.");
+                    } else {
+                        System.out.println("⚠️ Account update failed.");
+                    }
                     break;
                 case 4:
                     System.out.print("Enter Account Number to view: ");
                     String viewAccNum = sc.nextLine();
-                    Account acc = accountService.getAccount(viewAccNum);
+                    Account acc = accountService.getAccountByNumber(viewAccNum);
                     if (acc != null) {
                         System.out.println("\n" + acc);
                     } else {
@@ -97,16 +96,5 @@ public class Main {
                     System.out.println("⚠️ Invalid choice. Try again.");
             }
         } while (menuChoice != 7);
-    }
-
-    // ### check phone number existance
-    private static AccountService accountService = new AccountService();
-    private static boolean checkIfPhoneExists(String phoneNumber) {
-        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            return accountService.isPhoneNumberExists(conn, phoneNumber);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return true; // Treat error as duplicate for safety
-        }
     }
 }
