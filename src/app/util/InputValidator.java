@@ -86,6 +86,10 @@ public class InputValidator {
             System.out.println("❗ Name contains invalid consecutive symbols like '--', `''`, or double space.");
             return false;
         }
+        if (name.endsWith("-") || name.endsWith("'") || name.endsWith(" ")) {
+            System.out.println("⚠️ Name cannot end with a hyphen, apostrophe, or space.");
+            return false;
+        }
         // Regex check
         Matcher inputMatcher = namePattern.matcher(name);
         if (!inputMatcher.matches()) {
