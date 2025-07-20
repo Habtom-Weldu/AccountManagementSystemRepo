@@ -74,12 +74,6 @@ public class InputValidator {
             System.out.println("❗ Name must be between 2 and 70 characters.");
             return false;
         }
-        // Regex check
-        Matcher inputMatcher = namePattern.matcher(name);
-        if (!inputMatcher.matches()) {
-            System.out.println("❗ Name must start with a letter and contain only letters, spaces, hyphens (-), or apostrophes (').");
-            return false;
-        }
         // Check for consecutive invalid patterns
         boolean hasInvalid = false;
         for (String invalid : invalidSequences) {
@@ -90,6 +84,12 @@ public class InputValidator {
         }
         if (hasInvalid) {
             System.out.println("❗ Name contains invalid consecutive symbols like '--', `''`, or double space.");
+            return false;
+        }
+        // Regex check
+        Matcher inputMatcher = namePattern.matcher(name);
+        if (!inputMatcher.matches()) {
+            System.out.println("❗ Name must start with a letter and contain only letters, spaces, hyphens (-), or apostrophes (').");
             return false;
         }
         return true;
@@ -131,7 +131,7 @@ public class InputValidator {
             System.out.println("⚠️ Email is too long. Must be 254 characters or fewer.");
             return false;
         }
-        String[] partsArr = email.split("@",2);
+        String[] partsArr = email.split("@",3);
         if (partsArr.length != 2) {
             System.out.println("⚠️ Email must contain a single '@' character.");
             return false;
@@ -147,8 +147,8 @@ public class InputValidator {
             System.out.println("⚠️ Local part must start with a letter or digit.");
             return false;
         }
-        char lastChar = emailLocalPart.charAt(emailLocalPart.length() - 1);
-        if (lastChar == '.' || lastChar == '-' || lastChar == '_' || lastChar == '+') {
+        char lastLocalChar = emailLocalPart.charAt(emailLocalPart.length() - 1);
+        if (lastLocalChar == '.' || lastLocalChar == '-' || lastLocalChar == '_' || lastLocalChar == '+') {
             System.out.println("⚠️ Email Local part cannot end with special characters (., -, _, +).");
             return false;
         }
@@ -174,9 +174,8 @@ public class InputValidator {
         // Regex matching checking
         if (!pattern.matcher(email).matches()) {
             //return email;
+            System.out.println("⚠️ Invalid email format.");
             return false;
-        } else {
-            System.out.println("⚠️ Invalid email format. Please enter a valid email (e.g., user@example.com).");
         }
         return true;
     }
