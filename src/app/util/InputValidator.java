@@ -104,22 +104,45 @@ public class InputValidator {
           - No leading/trailing dot - No consecutive dots - Only valid characters in the local part.
           - Realistic domain and TLD structure - Case-insensitive - Friendly to real-world email.
         Length, structure, and character limits are all handled before running regex*/
-    public static String readValidEmail(String prompt){
+    public static String readValidEmail(String prompt) {
+        // to be used for feature if there is a need for method overloading
+        return readValidEmail(prompt, null); // Delegates to the overloaded method
+    }
+    public static String readValidEmail(String prompt, Function<String, Boolean> isDuplicateCheck){
         while (true) {
             System.out.print(prompt);
             String input;
             input = sc.nextLine().trim();
-            if (isValidEmail(input)) {
-                return input;
+            if (!isValidEmail(input)) {
+                continue;
             }
+            if (isDuplicateCheck.apply(input)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
+                System.out.println("⚠️ Email already exists in database.");
+                continue;
+            }
+            return input; // valid and not duplicated
         }
     }
     public static String readValidEmailOrDefault(String prompt, String currentEmail) {
-        System.out.print(prompt + " (" + currentEmail + "): ");
+        // to be used for feature if there is a need for method overloading
+        return readValidEmailOrDefault(prompt, currentEmail, null); // Delegates to the overloaded method
+    }
+    public static String readValidEmailOrDefault(String prompt, String currentEmail, Function<String, Boolean> isDuplicateCheck) {
         while (true) {
+            System.out.print(prompt + " (" + currentEmail + "): ");
             String input = sc.nextLine().trim();
-            if (input.isEmpty()) return currentEmail;
-            if (isValidEmail(input)) return input;
+            if (input.isEmpty()){
+                return currentEmail;
+            }
+            if (!isValidEmail(input)) {
+                continue;
+            }
+            // Only perform duplicate check if input is different from currentEmail
+            if (!input.equalsIgnoreCase(currentEmail) && isDuplicateCheck != null && isDuplicateCheck.apply(input)) {
+                System.out.println("⚠️ Email already exists.");
+                continue;
+            }
+            return input; // valid and not duplicated
         }
     }
     public static boolean isValidEmail(String email) {
@@ -201,7 +224,7 @@ public class InputValidator {
             /* the following code will call the isPhoneNumberExists() method in AccountService — indirectly — through
              a lambda function (or method reference) that passed in from Main.java "Main::checkIfPhoneExists".
              */
-            if (isDuplicateCheck.apply(phone)){//this will apply to "checkIfPhoneExists" method in Main.java.
+            if (isDuplicateCheck.apply(phone)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
                 System.out.println("⚠️ Phone number already exists in database.");
                 continue;
             }

@@ -12,7 +12,7 @@ public class DatabaseSetup {
                 accNumber TEXT UNIQUE NOT NULL,
                 name TEXT NOT NULL,
                 balance REAL NOT NULL DEFAULT 0.0,
-                email TEXT,
+                email TEXT NOT NULL UNIQUE,
                 phoneNumber TEXT NOT NULL UNIQUE,
                 accountType TEXT,
                 isActive INTEGER DEFAULT 1,

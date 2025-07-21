@@ -13,8 +13,8 @@ import app.util.InputValidator;
 
 /* what will this do?
    - Keeps all account objects in memory (HashMap).
-   - Loads/saves them from/to file.
-   - Adds, deletes, and looks up accounts.
+   - Loads/saves them from/to database/file.
+   - Adds, deletes, updates and looks up accounts.
    - Cleanly separates logic from your main() class.
  */
 public class AccountService {
@@ -52,7 +52,7 @@ public class AccountService {
             // Insert to DB (call DAO or write logic here)
             database.AccountDBHelper.insertAccount(conn, newAccount);
             hmAccounts.put(newAccNumber, newAccount); // updating our hash map
-            System.out.println("✅ Account created successfully.");
+            //System.out.println("✅ Account created successfully.");
         } catch (SQLException e) {
             System.out.println("❌ Failed to create account: " + e.getMessage());
         }
@@ -104,6 +104,15 @@ public class AccountService {
         }
         return hmAccounts;
     }
+    // Update Account
+    public boolean updateAccount(Account account) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            return AccountDBHelper.updateAccount(account, conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     // ### Update Account Interactive code
     public boolean updateAccountInteractive() {
         String accNumberToUpdate = InputValidator.readValidAccNumber("Enter account number to update: ");
@@ -122,8 +131,14 @@ public class AccountService {
         existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
                 existingAcc.getBalance()));
         // Email
-        existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter new Email",
-                existingAcc.getEmail()));
+        /*existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter new Email",
+                existingAcc.getEmail())); */
+        // Get email by passing prompt, current email and function checker
+        String email = InputValidator.readValidEmailOrDefault(
+                "Enter new Email: (" + existingAcc.getEmail() + "): ", existingAcc.getEmail(),
+                ExistenceChecker::checkIfEmailExists
+        );
+        existingAcc.setEmail(email);
         // Phone
         String phone = InputValidator.readValidPhoneNumberOrDefault("Enter new phone number (" +
             existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(),
@@ -131,14 +146,6 @@ public class AccountService {
           existingAcc.setPhoneNumber(phone);
         // Update Account
         return updateAccount(existingAcc);
-    }
-    public boolean updateAccount(Account account) {
-        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            return AccountDBHelper.updateAccount(account, conn);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     // ### Save all accounts to file

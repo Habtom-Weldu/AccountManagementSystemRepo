@@ -27,6 +27,26 @@ public class ExistenceChecker {
             return rs.next() && rs.getInt(1) > 0;
         }
     }
+    // Check If Email exists
+    public static boolean checkIfEmailExists(String email) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            return isEmailExists(conn, email);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true; // Treat error as duplicate for safety
+        }
+    }
+    public static boolean isEmailExists(Connection conn, String email) {
+        String sql = "SELECT 1 FROM accountsTable WHERE email = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // true if email already exists
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public static boolean checkIfAccountNumberExist(Connection conn, String accountNumber) {
         String query = "SELECT 1 FROM accountsTable WHERE accNumber = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {

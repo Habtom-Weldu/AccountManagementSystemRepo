@@ -36,7 +36,11 @@ public class Main {
                 case 1: // Case Create account
                     // Call the validated input methods by passing Prompt message
                     String name = InputValidator.readValidName("Enter customer name: ");
-                    String email = InputValidator.readValidEmail("Enter Email: ");
+                    //String email = InputValidator.readValidEmail("Enter Email: ");
+                    String email = InputValidator.readValidEmail(
+                            "Enter Email: ",
+                            ExistenceChecker::checkIfEmailExists
+                    );
                     // Entry for phone number, here we are sending a function a parameter.
                     String phoneNo = InputValidator.readValidPhoneNumber(
                             "Enter phone number (international format): ",
