@@ -116,8 +116,8 @@ public class InputValidator {
             if (!isValidEmail(input)) {
                 continue;
             }
-            if (isDuplicateCheck.apply(input)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
-                System.out.println("⚠️ Email already exists in database.");
+            if (isDuplicateCheck.apply(input)){//this will apply to "checkIfEmailExists" method in ExistenceChecker.java.
+                System.out.println("⚠️ Email already used by other customer.");
                 continue;
             }
             return input; // valid and not duplicated
@@ -129,7 +129,7 @@ public class InputValidator {
     }
     public static String readValidEmailOrDefault(String prompt, String currentEmail, Function<String, Boolean> isDuplicateCheck) {
         while (true) {
-            System.out.print(prompt + " (" + currentEmail + "): ");
+            System.out.print(prompt);
             String input = sc.nextLine().trim();
             if (input.isEmpty()){
                 return currentEmail;
@@ -139,7 +139,7 @@ public class InputValidator {
             }
             // Only perform duplicate check if input is different from currentEmail
             if (!input.equalsIgnoreCase(currentEmail) && isDuplicateCheck != null && isDuplicateCheck.apply(input)) {
-                System.out.println("⚠️ Email already exists.");
+                System.out.println("⚠️ Email already used by other customer.");
                 continue;
             }
             return input; // valid and not duplicated
@@ -312,17 +312,17 @@ public class InputValidator {
     public static double readBalanceOrDefault(String accountType, double currentBalance) {
         double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
         double max = 10_000_000;
-        return readDoubleInRangeWithDefault( String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
+        return readDoubleInRangeOrDefault( String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
                 "current (%.2f): ", min, max, currentBalance), min,max, currentBalance);
     }
-    public static double readDoubleInRangeWithDefault(String prompt, double min, double max, double defaultValue) {
+    public static double readDoubleInRangeOrDefault(String prompt, double min, double max, double defaultValue) {
         Scanner sc = new Scanner(System.in);
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
 
             if (input.isEmpty()) {
-                return defaultValue;
+                return defaultValue; // Accept current balance as default if entry is empty.
             }
             try {
                 double value = Double.parseDouble(input);
@@ -332,7 +332,7 @@ public class InputValidator {
                     System.out.printf("⚠️ Please enter a value between %.2f and %.2f.%n", min, max);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠️ Invalid number format.");
+                System.out.println("⚠️ Invalid number format. Please enter a valid amount.");
             }
         }
     }
