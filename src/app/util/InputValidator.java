@@ -1,5 +1,7 @@
 package app.util;
 
+import exceptions.GoBackToMainMenuException;
+
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.function.Function;
@@ -27,11 +29,14 @@ public class InputValidator {
         }
     }
     // ############ Validate Account number
-    public static String readValidAccNumber(String prompt){
+    public static String readValidAccNumber(String prompt) throws GoBackToMainMenuException {
         String input;
         while (true) {
             System.out.print(prompt);
             input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException();
+            }
             // Length and digits only check
             if (!input.matches("\\d{10}")) { // must be digits only and 10 digits long
                 System.out.println("⚠️ Invalid format. Account number must be 10 digits.");
@@ -41,27 +46,33 @@ public class InputValidator {
         }
     }
     // ############ Validate name
-    public static String readValidName(String prompt){
+    public static String readValidName(String prompt) throws GoBackToMainMenuException {
         String input;
         while (true) {
             System.out.print(prompt);
             input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException();
+            }
             if (isValidName(input)) {
                 return input;
             }
         }
     }
-    public static String readValidNameOrDefault(String prompt, String currentName) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print(prompt + " (" + currentName + "): ");
-        String input = sc.nextLine().trim();
-        if (input.isEmpty()) return currentName;
-        while (!isValidName(input)) {
+    public static String readValidNameOrDefault(String prompt, String currentName) throws GoBackToMainMenuException {
+        while (true) {
             System.out.print(prompt + " (" + currentName + "): ");
-            input = sc.nextLine().trim();
-            if (input.isEmpty()) return currentName;
+            String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException();
+            }
+            if (input.isEmpty()) {
+                return currentName; // Keep current if no new input
+            }
+            if (isValidName(input)) {
+                return input;
+            }
         }
-        return input;
     }
     public static boolean isValidName(String name) {
         String input;
@@ -104,15 +115,19 @@ public class InputValidator {
           - No leading/trailing dot - No consecutive dots - Only valid characters in the local part.
           - Realistic domain and TLD structure - Case-insensitive - Friendly to real-world email.
         Length, structure, and character limits are all handled before running regex*/
-    public static String readValidEmail(String prompt) {
+    public static String readValidEmail(String prompt) throws GoBackToMainMenuException {
         // to be used for feature if there is a need for method overloading
         return readValidEmail(prompt, null); // Delegates to the overloaded method
     }
-    public static String readValidEmail(String prompt, Function<String, Boolean> isDuplicateCheck){
+    public static String readValidEmail(String prompt, Function<String,
+            Boolean> isDuplicateCheck) throws GoBackToMainMenuException {
         while (true) {
             System.out.print(prompt);
             String input;
             input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException();
+            }
             if (!isValidEmail(input)) {
                 continue;
             }
@@ -123,14 +138,18 @@ public class InputValidator {
             return input; // valid and not duplicated
         }
     }
-    public static String readValidEmailOrDefault(String prompt, String currentEmail) {
+    public static String readValidEmailOrDefault(String prompt, String currentEmail) throws GoBackToMainMenuException {
         // to be used for feature if there is a need for method overloading
         return readValidEmailOrDefault(prompt, currentEmail, null); // Delegates to the overloaded method
     }
-    public static String readValidEmailOrDefault(String prompt, String currentEmail, Function<String, Boolean> isDuplicateCheck) {
+    public static String readValidEmailOrDefault(String prompt, String currentEmail, Function<String,
+            Boolean> isDuplicateCheck) throws GoBackToMainMenuException {
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException();
+            }
             if (input.isEmpty()){
                 return currentEmail;
             }
@@ -207,16 +226,20 @@ public class InputValidator {
         return true;
     }
     // ############ Read Valid Phone number
-    public static String readValidPhoneNumber(String prompt, Function<String, Boolean> isDuplicateCheck) {
-        String phone;
+    public static String readValidPhoneNumber(String prompt, Function<String, Boolean> isDuplicateCheck)
+           throws GoBackToMainMenuException {
+        String input;
         while (true) {
             System.out.print(prompt);
-            phone = sc.nextLine().trim();
-            if (!phone.startsWith("+") || !phone.substring(1).matches("\\d+")) {
+            input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
+            if (!input.startsWith("+") || !input.substring(1).matches("\\d+")) {
                 System.out.println("⚠️ Invalid format. Must start with '+' and contain only digits.");
                 continue;
             }
-            int length = phone.length() - 1;
+            int length = input.length() - 1;
             if (length < 10 || length > 15) {
                 System.out.println("⚠️ Phone number must be between 10 and 15 digits.");
                 continue;
@@ -224,18 +247,21 @@ public class InputValidator {
             /* the following code will call the isPhoneNumberExists() method in AccountService — indirectly — through
              a lambda function (or method reference) that passed in from Main.java "Main::checkIfPhoneExists".
              */
-            if (isDuplicateCheck.apply(phone)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
+            if (isDuplicateCheck.apply(input)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
                 System.out.println("⚠️ Phone number already exists in database.");
                 continue;
             }
-            return phone;
+            return input;
         }
     }
     public static String readValidPhoneNumberOrDefault(String prompt, String currentPhone,
-                                                       Function<String, Boolean> isDuplicateCheck) {
+        Function<String, Boolean> isDuplicateCheck) throws GoBackToMainMenuException {
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             int length = input.length() - 1;
             if (input.isEmpty()) {
                 return currentPhone;  // Keep existing
@@ -267,32 +293,38 @@ public class InputValidator {
         hmAccTypeMinBalances.put("Checking", 50.00);
         hmAccTypeMinBalances.put("Business", 1000.00);
     }
-    public static String readValidAccountType(String prompt) {
-        String type;
+    public static String readValidAccountType(String prompt) throws GoBackToMainMenuException {
+        String input;
         while (true) {
             System.out.print(prompt);
-            type = sc.nextLine().trim();
+            input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             // Normalize: Capitalize a first letter only
-            type = type.substring(0, 1).toUpperCase() + type.substring(1).toLowerCase();
-            if (hmAccTypeMinBalances.containsKey(type)) {
-                return type;
+            input = input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+            if (hmAccTypeMinBalances.containsKey(input)) {
+                return input;
             } else {
                 System.out.println("⚠️ Invalid account type. Please enter Savings, Checking, or Business.");
             }
         }
     }
     // ############ Read Valid Double balance value
-    public static double readBalanceForAccountType(String prompt,String accountType) {
+    public static double readBalanceForAccountType(String prompt,String accountType) throws GoBackToMainMenuException {
         double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
         double max = 10_000_000.00;
         String fullPrompt = String.format("%s (%.2f - %,.2f): ", prompt, min, max);
         return readDoubleInRange(fullPrompt, min,max);
     }
-    public static double readDoubleInRange(String prompt, double min, double max) {
+    public static double readDoubleInRange(String prompt, double min, double max) throws GoBackToMainMenuException {
         double value;
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             if (input.isEmpty()) {
                 System.out.println("⚠️ Input cannot be empty. Please enter a number.");
                 continue;
@@ -309,18 +341,21 @@ public class InputValidator {
             }
         }
     }
-    public static double readBalanceOrDefault(String accountType, double currentBalance) {
+    public static double readBalanceOrDefault(String accountType, double currentBalance) throws GoBackToMainMenuException {
         double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
         double max = 10_000_000;
         return readDoubleInRangeOrDefault( String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
                 "current (%.2f): ", min, max, currentBalance), min,max, currentBalance);
     }
-    public static double readDoubleInRangeOrDefault(String prompt, double min, double max, double defaultValue) {
+    public static double readDoubleInRangeOrDefault(String prompt, double min, double max,
+                 double defaultValue) throws GoBackToMainMenuException {
         Scanner sc = new Scanner(System.in);
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
-
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             if (input.isEmpty()) {
                 return defaultValue; // Accept current balance as default if entry is empty.
             }
@@ -355,11 +390,14 @@ public class InputValidator {
         }
     }
 
-    public static String readNonEmptyString(String prompt) {
+    public static String readNonEmptyString(String prompt) throws GoBackToMainMenuException {
         String input;
         while (true) {
             System.out.print(prompt);
             input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             if (!input.isEmpty()) {
                 return input;
             } else {
@@ -368,11 +406,14 @@ public class InputValidator {
         }
     }
 
-    public static boolean readYesOrNo(String prompt) {
+    public static boolean readYesOrNo(String prompt) throws GoBackToMainMenuException {
         String input;
         while (true) {
             System.out.print(prompt + " (y/n): ");
             input = sc.nextLine().trim().toLowerCase();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
             if (input.equals("y") || input.equals("yes")) {
                 return true;
             } else if (input.equals("n") || input.equals("no")) {
