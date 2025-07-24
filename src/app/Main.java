@@ -1,5 +1,6 @@
 package app;
 import app.util.InputValidator;
+import exceptions.GoBackToMainMenuException;
 import services.AccountService;
 import models.Account;
 import app.util.ExistenceChecker;
@@ -32,47 +33,63 @@ public class Main {
             System.out.print("Enter your choice: ");
             menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
             //sc.nextLine(); // clear buffer
+            System.out.println("(You can type 'back' to get back to main Menu.)");
             switch (menuChoice) {
                 case 1: // Case Create account
-                    // Call the validated input methods by passing Prompt message
-                    String name = InputValidator.readValidName("Enter customer name: ");
-                    //String email = InputValidator.readValidEmail("Enter Email: ");
-                    String email = InputValidator.readValidEmail(
-                            "Enter Email: ",
-                            ExistenceChecker::checkIfEmailExists
-                    );
-                    // Entry for phone number, here we are sending a function a parameter.
-                    String phoneNo = InputValidator.readValidPhoneNumber(
-                            "Enter phone number (international format): ",
-                            ExistenceChecker::checkIfPhoneExists
-                    );
-                    String accountType = InputValidator.readValidAccountType("Enter Account Type " +
-                            "(Savings/Checking/Business): ");
-                    double initialBalance = InputValidator.readBalanceForAccountType("Enter initial balance ",
-                            accountType);
-                    // Create the account — all DB logic is inside accountService.createAccount(..) method
-                    accountService.createAccount(name, initialBalance, email, phoneNo, accountType);
+                    try {
+                        // Call the validated input methods by passing Prompt message
+                        String name = InputValidator.readValidName("Enter customer name: ");
+                        //String email = InputValidator.readValidEmail("Enter Email: ");
+                        String email = InputValidator.readValidEmail("Enter Email: ",
+                                ExistenceChecker::checkIfEmailExists);
+                        // Entry for phone number, here we are sending a function a parameter.
+                        String phoneNo = InputValidator.readValidPhoneNumber(
+                                "Enter phone number (international format): ", ExistenceChecker::checkIfPhoneExists);
+                        String accountType = InputValidator.readValidAccountType("Enter Account Type " +
+                                "(Savings/Checking/Business): ");
+                        double initialBalance = InputValidator.readBalanceForAccountType("Enter initial balance ",
+                                accountType);
+                        // Create the account — all DB logic is inside accountService.createAccount(..) method
+                        accountService.createAccount(name, initialBalance, email, phoneNo, accountType);
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
+                    }
                     break;
                 case 2:
-                    String accNumberToDelete = InputValidator.readValidAccNumber("Enter Account Number to delete: ");
-                    boolean deleted = accountService.deleteAccount(accNumberToDelete);
-                    System.out.println(deleted ? "✅ Account deleted." : "⚠️ Account not found.");
+                    try {
+                        String accNumberToDelete = InputValidator.readValidAccNumber("Enter Account Number to delete: ");
+                        boolean deleted = accountService.deleteAccount(accNumberToDelete);
+                        System.out.println(deleted ? "✅ Account deleted." : "⚠️ Account not found.");
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
+                    }
                     break;
-
                 case 3: // Update
-                    if (accountService.updateAccountInteractive()) {
-                        System.out.println("✅ Account updated successfully.");
-                    } else {
-                        System.out.println("⚠️ Account update failed.");
+                    try {
+                        if (accountService.updateAccountInteractive()) {
+                            System.out.println("✅ Account updated successfully.");
+                        } else {
+                            System.out.println("⚠️ Account update failed.");
+                        }
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
                     }
                     break;
                 case 4:
-                    String accNumberToView = InputValidator.readValidAccNumber("Enter Account Number to view: ");
-                    Account acc = accountService.getAccountByNumber(accNumberToView);
-                    if (acc != null) {
-                        System.out.println("\n" + acc);
-                    } else {
-                        System.out.println("⚠️ Account not found.");
+                    try {
+                        String accNumberToView = InputValidator.readValidAccNumber("Enter Account Number to view: ");
+                        Account acc = accountService.getAccountByNumber(accNumberToView);
+                        if (acc != null) {
+                            System.out.println("\n" + acc);
+                        } else {
+                            System.out.println("⚠️ Account not found.");
+                        }
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
                     }
                     break;
                 case 5:
@@ -85,10 +102,10 @@ public class Main {
                         }
                     }
                     break;
-                case 6:
+                case 6: // for saving
                     //accountService.saveAccount(newAcc);
                     break;
-                case 7:
+                case 7: // for exiting
                     //accountService.saveAccount();
                     System.out.println("👋 Exiting program...");
                     break;
