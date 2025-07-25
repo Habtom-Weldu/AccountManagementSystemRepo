@@ -11,7 +11,9 @@ are planned.
 src/
 ├── app/
 │   ├── Main.java # app.Main program (menu & user interaction)
-│   └── FileManager.java # Handles file path management
+└── util/
+│       └── InputValidator.java
+│       └── FileManager.java # Handles file path management
 ├── models/
 │   └── Account.java # Account data model with fields & accessors
 ├── services/
@@ -46,14 +48,22 @@ Login/Register
 ## ✅ Features Implemented
 - Create new bank accounts with required details
 - View a single account by account number
-- View all stored accounts
-- Delete accounts by account number
+- View al accounts
+- Delete account by account number
 - Save/load accounts to a database.
+- Update account
+    - Update name
+    - Update phone number (validated and uniqueness enforced)
+    - Update email (validated and uniqueness enforced)
+    - Update balance (with account type considerations)
+- Input validations
+- Back-to-menu navigation from any prompt
+- Duplicate checking logic with `ExistenceChecker`
+- Custom exception for menu navigation
+- Clean code structure and separation of concerns
 - Clean separation between a model, service, and UI layers
 ---
 ## 🔄 Planned Features
--  Input validation for all fields
--  Update Account
 -  Deposit / Withdraw support
 -  Export to CSV (optional)
 -  Account login/authentication system
@@ -85,7 +95,6 @@ Login/Register
 
 ---
 ## How to Run
-
 1. Clone the repo
 2. Make sure you have Java and SQLite installed
 3. Run `Main.java` in your IDE or terminal
