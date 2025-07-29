@@ -1,4 +1,5 @@
 package services;
+import exceptions.GoBackToMainMenuException;
 import models.Account; // to use the class from 'models' package we created in this project
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -100,7 +101,11 @@ public class AccountService {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error loading accounts: " + e.getMessage());
+            if (e.getMessage().toLowerCase().contains("database is locked")) {
+                System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
+            } else {
+                System.err.println("Error loading accounts: " + e.getMessage());
+            }
         }
         return hmAccounts;
     }
@@ -114,7 +119,7 @@ public class AccountService {
         }
     }
     // ### Update Account Interactive code
-    public boolean updateAccountInteractive() {
+    public boolean updateAccountInteractive() throws GoBackToMainMenuException {
         String accNumberToUpdate = InputValidator.readValidAccNumber("Enter account number to update: ");
         Account existingAcc = getAccountByNumber(accNumberToUpdate);
         if (existingAcc == null) {
@@ -127,23 +132,18 @@ public class AccountService {
         // Name
         existingAcc.setName(InputValidator.readValidNameOrDefault("Enter new name",
                 existingAcc.getName()));
-        // Balance
-        existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
-                existingAcc.getBalance()));
-        // Email
-        /*existingAcc.setEmail(InputValidator.readValidEmailOrDefault("Enter new Email",
-                existingAcc.getEmail())); */
-        // Get email by passing prompt, current email and function checker
+        // Email: Get email by passing prompt, current email and function checker
         String email = InputValidator.readValidEmailOrDefault(
                 "Enter new Email: (" + existingAcc.getEmail() + "): ", existingAcc.getEmail(),
-                ExistenceChecker::checkIfEmailExists
-        );
+                ExistenceChecker::checkIfEmailExists);
         existingAcc.setEmail(email);
         // Phone
         String phone = InputValidator.readValidPhoneNumberOrDefault("Enter new phone number (" +
-            existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(),
-            ExistenceChecker::checkIfPhoneExists);
+            existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(), ExistenceChecker::checkIfPhoneExists);
           existingAcc.setPhoneNumber(phone);
+        // Balance
+        existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
+                existingAcc.getBalance()));
         // Update Account
         return updateAccount(existingAcc);
     }

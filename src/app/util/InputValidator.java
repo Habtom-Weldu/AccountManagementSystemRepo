@@ -143,7 +143,7 @@ public class InputValidator {
         return readValidEmailOrDefault(prompt, currentEmail, null); // Delegates to the overloaded method
     }
     public static String readValidEmailOrDefault(String prompt, String currentEmail, Function<String,
-            Boolean> isDuplicateCheck) throws GoBackToMainMenuException {
+            Boolean> isEmailDuplicatedCheck) throws GoBackToMainMenuException {
         while (true) {
             System.out.print(prompt);
             String input = sc.nextLine().trim();
@@ -157,7 +157,7 @@ public class InputValidator {
                 continue;
             }
             // Only perform duplicate check if input is different from currentEmail
-            if (!input.equalsIgnoreCase(currentEmail) && isDuplicateCheck != null && isDuplicateCheck.apply(input)) {
+            if (!input.equalsIgnoreCase(currentEmail) && isEmailDuplicatedCheck != null && isEmailDuplicatedCheck.apply(input)) {
                 System.out.println("⚠️ Email already used by other customer.");
                 continue;
             }

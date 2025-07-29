@@ -25,6 +25,9 @@ public class ExistenceChecker {
             ResultSet rs = ps.executeQuery();
             //System.out.println(rs.next() && rs.getInt(1) > 0);
             return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
     // Check If Email exists
