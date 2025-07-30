@@ -1,8 +1,8 @@
 package database;
 import models.Account;
 import java.sql.*;
-import database.DatabaseManager;
-public class AccountDBHelper {
+
+public class AccountRepository {
     public static boolean insertAccount(Connection conn, Account acc) {
         // Account exists in DB, is already checked while generating account number in AccountService.java
         String insertSql = """
