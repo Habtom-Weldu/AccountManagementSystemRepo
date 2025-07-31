@@ -1,5 +1,5 @@
-package database;
-import models.Account;
+package app.repository;
+import app.models.Account;
 import java.sql.*;
 
 public class AccountRepository {
@@ -16,7 +16,7 @@ public class AccountRepository {
                 insertStmt.setString(4, acc.getEmail());
                 insertStmt.setString(5, acc.getPhoneNumber());
                 insertStmt.setString(6, acc.getAccountType());
-                // the isActive and dateCreate are defaulted in the database
+                // the isActive and dateCreate are defaulted in the app.database
                 insertStmt.executeUpdate();
                 System.out.println("✅ Account created and successfully saved. Account No: " + acc.getAccNumber());
                 return true;
@@ -28,7 +28,7 @@ public class AccountRepository {
                 System.out.println("⚠️ Duplicate phone number detected. Please try again.");
             } else if (e.getMessage().contains("UNIQUE constraint failed: accountsTable.email")) {
                 System.out.println("⚠️ Duplicate email detected. Please try again.");
-            }  else if (e.getMessage().toLowerCase().contains("database is locked")) {
+            }  else if (e.getMessage().toLowerCase().contains("app.database is locked")) {
                 System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
             } else {
                 System.out.println("❌ Database error: " + e.getMessage());
@@ -53,7 +53,7 @@ public class AccountRepository {
                 System.out.println("⚠️ Duplicate email detected. Please try again.");
             } else if (e.getMessage().contains("UNIQUE constraint failed: accountsTable.email")) {
                 System.out.println("⚠️ Duplicate email detected. Please try again.");
-            } else if (e.getMessage().toLowerCase().contains("database is locked")) {
+            } else if (e.getMessage().toLowerCase().contains("app.database is locked")) {
                 System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
             } else {
                 System.out.println("❌ Database error: " + e.getMessage());
@@ -68,7 +68,7 @@ public class AccountRepository {
             pstmt.setString(1, accNumber);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-             if (e.getMessage().toLowerCase().contains("database is locked")) {
+             if (e.getMessage().toLowerCase().contains("app.database is locked")) {
                 System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
             } else {
                  System.err.println("❌ Delete failed: " + e.getMessage());

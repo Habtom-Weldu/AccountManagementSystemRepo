@@ -1,20 +1,22 @@
-package services;
-import exceptions.GoBackToMainMenuException;
-import models.Account; // to use the class from 'models' package we created in this project
+package app.services;
+import app.repository.AccountRepository;
+import app.exceptions.GoBackToMainMenuException;
+import app.models.Account; // to use the class from 'app.models' package we created in this project
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
+
+import app.repository.DatabaseManager;
 import app.util.ExistenceChecker;
 
-import database.*;
 import app.util.InputValidator;
 
 /* what will this do?
    - Keeps all account objects in memory (HashMap).
-   - Loads/saves them from/to database/file.
+   - Loads/saves them from/to app.database/file.
    - Adds, deletes, updates and looks up accounts.
    - Cleanly separates logic from your main() class.
  */
@@ -51,7 +53,7 @@ public class AccountService {
             String newAccNumber = generateUniqueAccountNumber(conn);
             Account newAccount = new Account(newAccNumber, name, balance, email, phoneNumber, accountType);
             // Insert to DB (call DAO or write logic here)
-            database.AccountDBHelper.insertAccount(conn, newAccount);
+            AccountRepository.insertAccount(conn, newAccount);
             hmAccounts.put(newAccNumber, newAccount); // updating our hash map
             //System.out.println("✅ Account created successfully.");
         } catch (SQLException e) {
@@ -61,7 +63,7 @@ public class AccountService {
     }
     // ########### Delete account by account number
     public boolean deleteAccount(String accNumber) {
-        database.AccountDBHelper.deleteAccountFromDB(accNumber); // delete from database table as well
+        AccountRepository.deleteAccountFromDB(accNumber); // delete from app.database table as well
         return hmAccounts.remove(accNumber) != null;
     }
     // ########### Get a single account by account number
@@ -101,7 +103,7 @@ public class AccountService {
                 }
             }
         } catch (SQLException e) {
-            if (e.getMessage().toLowerCase().contains("database is locked")) {
+            if (e.getMessage().toLowerCase().contains("app.database is locked")) {
                 System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
             } else {
                 System.err.println("Error loading accounts: " + e.getMessage());
@@ -112,7 +114,7 @@ public class AccountService {
     // Update Account
     public boolean updateAccount(Account account) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            return AccountDBHelper.updateAccount(account, conn);
+            return AccountRepository.updateAccount(account, conn);
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

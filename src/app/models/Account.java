@@ -1,6 +1,5 @@
-package models;
+package app.models;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Account implements Serializable {

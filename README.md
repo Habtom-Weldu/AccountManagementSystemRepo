@@ -1,6 +1,6 @@
 # Simple Account Management System
 
-This is a simple **Java-based Account Management System** that interacts with a **SQLite database** to 
+This is a simple **Java-based Account Management System** that interacts with a **SQLite app.database** to 
 manage user accounts through a console-based interface. The application allows users to create, view, update,
 and delete accounts, as well as view all existing accounts. Additional features like deposit and withdrawal 
 are planned.
@@ -8,16 +8,21 @@ are planned.
 ---
 
 ## Project Structure
-src/
-├── app/
-│   ├── Main.java # app.Main program (menu & user interaction)
-└── util/
-│       └── InputValidator.java
-│       └── FileManager.java # Handles file path management
-├── models/
-│   └── Account.java # Account data model with fields & accessors
-├── services/
-│   └── AccountService.java # Core logic for managing accounts
+
+Account Management System/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── data/                 ← contains database or runtime data
+├── src/
+│   └── app/
+│       ├── Main.java     ← main class (entry point)
+│       ├── database/     ← 
+│       ├── model/        ← data models (e.g., Account.java)
+│       ├── service/      ← business logic (e.g., AccountService.java)
+│       ├── repository/   ← database interaction layer
+│       ├── exceptions/   ← custom exception classes
+│       └── util/         ← utility classes (e.g., InputValidator.java)
 
 ---
 [Start]
@@ -50,7 +55,7 @@ Login/Register
 - View a single account by account number
 - View al accounts
 - Delete account by account number
-- Save/load accounts to a database.
+- Save/load accounts to a app.database.
 - Update account
     - Update name
     - Update phone number (validated and uniqueness enforced)
@@ -76,7 +81,7 @@ Login/Register
 - Object Serialization
 - IntelliJ IDEA
 - Git + GitHub
-- SQLite database
+- SQLite app.database
 
 # Tech Stack
 | Component      | Description              |
@@ -101,11 +106,13 @@ Login/Register
 Database file (`accounts.db`) will be created automatically on first run.
 
 Compile and run the project:
-If using command line:
-bash
-javac -d out src/**/*.java
-java -cp out app.Main
-Or open the project in IntelliJ and run app.Main.java.
+If using command line: Make sure you're in the root of the project when running these commands.
+ ✅ Compile the code:
+    javac -d out src/app/Main.java
+ ▶️ Run the application:
+    java -cp out app.Main 
+Or open the project in IntelliJ and run src/app/Main.java.
+
 ---
 ## 🧑‍💻 Author
 

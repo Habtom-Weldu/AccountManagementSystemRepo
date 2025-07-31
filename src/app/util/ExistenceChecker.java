@@ -1,6 +1,6 @@
 package app.util;
 
-import database.DatabaseManager;
+import app.repository.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +17,7 @@ public class ExistenceChecker {
             return true; // Treat error as duplicate for safety
         }
     }
-    // ### Check phone number existence in a database before creating an account with the phone number input
+    // ### Check phone number existence in a app.database before creating an account with the phone number input
     public static boolean isPhoneNumberExists(Connection conn, String phoneNum) throws SQLException {
         String query = "SELECT COUNT(*) FROM accountsTable WHERE phoneNumber = ?";
         try (PreparedStatement ps = conn.prepareStatement(query)) {

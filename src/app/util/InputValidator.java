@@ -1,6 +1,6 @@
 package app.util;
 
-import exceptions.GoBackToMainMenuException;
+import app.exceptions.GoBackToMainMenuException;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -248,7 +248,7 @@ public class InputValidator {
              a lambda function (or method reference) that passed in from Main.java "Main::checkIfPhoneExists".
              */
             if (isDuplicateCheck.apply(input)){//this will apply to "checkIfPhoneExists" method in ExistenceChecker.java.
-                System.out.println("⚠️ Phone number already exists in database.");
+                System.out.println("⚠️ Phone number already exists in app.database.");
                 continue;
             }
             return input;

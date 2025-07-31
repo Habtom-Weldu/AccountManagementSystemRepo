@@ -1,8 +1,9 @@
 package app;
+import app.repository.DatabaseSetup;
 import app.util.InputValidator;
-import exceptions.GoBackToMainMenuException;
-import services.AccountService;
-import models.Account;
+import app.exceptions.GoBackToMainMenuException;
+import app.services.AccountService;
+import app.models.Account;
 import app.util.ExistenceChecker;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class Main {
     */
 
     public static void main(String[] args) {
-        database.DatabaseSetup.createAccountsTable(); // ✅ Ensure table is created
+        DatabaseSetup.createAccountsTable(); // ✅ Ensure table is created
         //2. we need to define input from the keyboard inside this main method
         Scanner sc = new Scanner(System.in);
         AccountService accountService = new AccountService();

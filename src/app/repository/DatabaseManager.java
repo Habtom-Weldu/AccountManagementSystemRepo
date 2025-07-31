@@ -1,4 +1,4 @@
-package database;
+package app.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,7 +31,7 @@ public class DatabaseManager {
         }
     }
     /*
-    // This class will handle connecting to SQLite database file.
+    // This class will handle connecting to SQLite app.database file.
     // private static final String DB_URL = "jdbc:sqlite:accountsDB.db"; // stored in project root
     private static final String DB_FILE_PATH = "data/accountsDB.db";
 
