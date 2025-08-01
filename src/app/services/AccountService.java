@@ -6,6 +6,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -30,7 +31,15 @@ public class AccountService {
         loadAccounts(); // load accounts into the program
     } */
     public AccountService() {
-        loadAccounts(); // load accounts into the program
+        loadAccountsToMemory(); // load accounts into the program
+    }
+
+    // ####### Create Instance of AccountRepository
+    /* We can call instance methods like 'getAllAccounts' in AccountRepository,
+       by creating instance of the class having instance method in it*/
+    private AccountRepository AccRepoInstance;
+    public AccountService(AccountRepository repo) { // constructor that accept
+        this.AccRepoInstance = repo; // now we can use AccRepoInstance to call instance methods in AccountRepository.java
     }
 
     // ########### Generate  Account number inorder to create an account
@@ -67,50 +76,20 @@ public class AccountService {
         return hmAccounts.remove(accNumber) != null;
     }
     // ########### Get a single account by account number
-    public Account getAccountByNumber(String accNumber) {
-        //loadAccounts();
-        /* we do not need loadAccounts() method call, coz when we call
+    public Account getAccountByAccNum(String accNumber) {
+        //loadAccountsToMemory();
+        /* we do not need loadAccountsToMemory() method call, coz when we call
         accountService.getAccount(viewAccNum); we already created an object of AccountService class,
         and this class is already calling loadAccounts() in its constructor */
         return hmAccounts.get(accNumber);
     }
 
     // ########### Get all accounts
-    public HashMap<String, Account> getAllAccounts() {
+    /*public HashMap<String, Account> getAllAccounts() {
         //loadAccounts();
         return hmAccounts;
-    }
-    // ########### Load Accounts into HashMap
-    public HashMap<String, Account> loadAccounts() {
-        String sql = "SELECT * FROM accountsTable;";
-        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            assert conn != null; // this requires to Enable Assertions in IntelliJ
-            try (Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery(sql)) {
-                DateTimeFormatter myDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                while (rs.next()) {
-                    Account acc = new Account(
-                            rs.getString("accNumber"),
-                            rs.getString("name"),
-                            rs.getDouble("balance"),
-                            rs.getString("email"),
-                            rs.getString("phoneNumber"),
-                            rs.getString("accountType"),
-                            rs.getInt("isActive") == 1,
-                            LocalDateTime.parse(rs.getString("dateCreated"), myDateFormatter)
-                    );
-                    hmAccounts.put(acc.getAccNumber(), acc);
-                }
-            }
-        } catch (SQLException e) {
-            if (e.getMessage().toLowerCase().contains("app.database is locked")) {
-                System.out.println("⚠️ Database is locked. Please close other applications accessing it and try again.");
-            } else {
-                System.err.println("Error loading accounts: " + e.getMessage());
-            }
-        }
-        return hmAccounts;
-    }
+    } */
+
     // Update Account
     public boolean updateAccount(Account account) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
@@ -123,7 +102,7 @@ public class AccountService {
     // ### Update Account Interactive code
     public boolean updateAccountInteractive() throws GoBackToMainMenuException {
         String accNumberToUpdate = InputValidator.readValidAccNumber("Enter account number to update: ");
-        Account existingAcc = getAccountByNumber(accNumberToUpdate);
+        Account existingAcc = getAccountByAccNum(accNumberToUpdate);
         if (existingAcc == null) {
             System.out.println("❌ Account not found.");
             return false;
@@ -149,7 +128,34 @@ public class AccountService {
         // Update Account
         return updateAccount(existingAcc);
     }
-
+     public boolean deposit(String accountNum, double amount) {
+         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+             Account acc = getAccountByAccNum(accountNum);
+             if (acc == null || amount <= 0) return false;
+             acc.setBalance(acc.getBalance() + amount);
+             return AccountRepository.updateAccount(acc, conn);
+         } catch (SQLException e) {
+             e.printStackTrace();
+             return false;
+         }
+    }
+    // ########### Load Accounts into HashMap/To Memory
+    public void loadAccountsToMemory() {
+        List<Account> accsList = AccRepoInstance.getAllAccounts();
+        hmAccounts.clear();  // clear old data before loading new
+        for (Account acc : accsList) {
+            hmAccounts.put(acc.getAccNumber(), acc);
+        }
+    }
+    public void displayAccounts() {
+        if (hmAccounts.isEmpty()) {
+            System.out.println("⚠️ No accounts available.");
+        } else {
+            for (Account acc : hmAccounts.values()) {
+                System.out.println("\n" + acc);
+            }
+        }
+    }
     // ### Save all accounts to file
     /*public void saveAccounts() {
         try (FileOutputStream fos = new FileOutputStream(filePath);

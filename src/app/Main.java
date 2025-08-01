@@ -1,4 +1,5 @@
 package app;
+import app.repository.AccountRepository;
 import app.repository.DatabaseSetup;
 import app.util.InputValidator;
 import app.exceptions.GoBackToMainMenuException;
@@ -29,7 +30,9 @@ public class Main {
             System.out.println("4. View Account");
             System.out.println("5. View All Accounts");
             System.out.println("6. Save Accounts");
-            System.out.println("7. Exit");
+            System.out.println("7. Deposit");
+            System.out.println("8. Withdraw money");
+            System.out.println("9. Exit");
 
             System.out.print("Enter your choice: ");
             menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
@@ -82,7 +85,7 @@ public class Main {
                 case 4:
                     try {
                         String accNumberToView = InputValidator.readValidAccNumber("Enter Account Number to view: ");
-                        Account acc = accountService.getAccountByNumber(accNumberToView);
+                        Account acc = accountService.getAccountByAccNum(accNumberToView);
                         if (acc != null) {
                             System.out.println("\n" + acc);
                         } else {
@@ -94,19 +97,16 @@ public class Main {
                     }
                     break;
                 case 5:
-                    HashMap<String, Account> allAccounts = accountService.getAllAccounts();
-                    if (allAccounts.isEmpty()) {
-                        System.out.println("⚠️ No accounts available.");
-                    } else {
-                        for (Account a : allAccounts.values()) {
-                            System.out.println("\n" + a);
-                        }
-                    }
+                    accountService.displayAccounts();
                     break;
                 case 6: // for saving
                     //accountService.saveAccount(newAcc);
                     break;
-                case 7: // for exiting
+                case 7: // Deposit
+                    break;
+                case 8: //Withdraw money
+                    break;
+                case 9: // for exiting
                     //accountService.saveAccount();
                     System.out.println("👋 Exiting program...");
                     break;

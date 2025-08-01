@@ -1,6 +1,10 @@
 package app.repository;
 import app.models.Account;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountRepository {
     public static boolean insertAccount(Connection conn, Account acc) {
@@ -75,5 +79,32 @@ public class AccountRepository {
              }
             return false;
         }
+    }
+    public List<Account> getAllAccounts() {
+        List<Account> accountsList = new ArrayList<>();
+        String sql = "SELECT * FROM accountsTable;";
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            assert conn != null; // this requires to Enable Assertions in IntelliJ
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
+                DateTimeFormatter myDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                while (rs.next()) {
+                    Account acc = new Account(
+                            rs.getString("accNumber"),
+                            rs.getString("name"),
+                            rs.getDouble("balance"),
+                            rs.getString("email"),
+                            rs.getString("phoneNumber"),
+                            rs.getString("accountType"),
+                            rs.getInt("isActive") == 1,
+                            LocalDateTime.parse(rs.getString("dateCreated"), myDateFormatter)
+                    );
+                    accountsList.add(acc);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching accounts: " + e.getMessage());
+        }
+        return accountsList;
     }
 }
