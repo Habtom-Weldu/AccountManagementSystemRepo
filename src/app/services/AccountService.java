@@ -93,7 +93,11 @@ public class AccountService {
     // Update Account
     public boolean updateAccount(Account account) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            return AccountRepository.updateAccount(account, conn);
+            boolean updateSuccess = AccountRepository.updateAccountInDB(account,conn);
+            if (updateSuccess) {
+                hmAccounts.put(account.getAccNumber(), account); // To update in-memory HashMap as well
+            }
+            return updateSuccess;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -133,7 +137,11 @@ public class AccountService {
              Account acc = getAccountByAccNum(accountNum);
              if (acc == null || amount <= 0) return false;
              acc.setBalance(acc.getBalance() + amount);
-             return AccountRepository.updateAccount(acc, conn);
+             boolean depositSuccess = AccountRepository.updateAccountInDB(acc, conn);
+             if (depositSuccess) {
+                 hmAccounts.put(accountNum, acc); // To update in-memory HashMap as well
+             }
+             return depositSuccess;
          } catch (SQLException e) {
              e.printStackTrace();
              return false;
