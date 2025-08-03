@@ -35,7 +35,7 @@ public class Main {
             System.out.println("9. Exit");
 
             System.out.print("Enter your choice: ");
-            menuChoice = InputValidator.readIntInRange(1, 8, "Select a menu option (1–8): ");
+            menuChoice = InputValidator.readIntInRange(1, 9, "Select a menu option (1–9): ");
             //sc.nextLine(); // clear buffer
             System.out.println("(You can type 'back' to get back to main Menu.)");
             switch (menuChoice) {
@@ -82,7 +82,7 @@ public class Main {
                         continue; // loop again, to display the main menu
                     }
                     break;
-                case 4:
+                case 4: // View account by Account Number
                     try {
                         String accNumberToView = InputValidator.readValidAccNumber("Enter Account Number to view: ");
                         Account acc = accountService.getAccountByAccNum(accNumberToView);
@@ -96,7 +96,7 @@ public class Main {
                         continue; // loop again, to display the main menu
                     }
                     break;
-                case 5:
+                case 5: // Display all accounts
                     accountService.displayAccounts();
                     break;
                 case 6: // for saving
@@ -105,6 +105,15 @@ public class Main {
                 case 7: // Deposit
                     break;
                 case 8: //Withdraw money
+                    try {
+                        String accNumberWithdraw = InputValidator.readValidAccNumber("Enter Account Number to withdraw money");
+                        String prompt ="Enter amount to withdraw: ";
+                        double amount = InputValidator.readDoubleInRange(prompt,10.00, 10_000_000.00);
+                        boolean success = accountService.withdraw(accNumberWithdraw, amount);
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
+                    }
                     break;
                 case 9: // for exiting
                     //accountService.saveAccount();

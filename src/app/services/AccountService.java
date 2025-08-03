@@ -25,26 +25,38 @@ public class AccountService {
     private static final Scanner sc = new Scanner(System.in);
     private final HashMap<String, Account> hmAccounts = new HashMap<>();
     private String filePath;
-
-    /*public AccountService(String fp) {
-        this.filePath = fp;
-        loadAccounts(); // load accounts into the program
-    } */
     public AccountService() {
         loadAccountsToMemory(); // load accounts into the program
     }
-
-    // ####### Create Instance of AccountRepository
+    // Create Instance of AccountRepository
     /* We can call instance methods like 'getAllAccounts' in AccountRepository,
        by creating instance of the class having instance method in it*/
-    private AccountRepository AccRepoInstance;
-    public AccountService(AccountRepository repo) { // constructor that accept
+    private AccountRepository AccRepoInstance = new AccountRepository();
+    public AccountService(AccountRepository repo) { // constructor that accepts
         this.AccRepoInstance = repo; // now we can use AccRepoInstance to call instance methods in AccountRepository.java
     }
-
+    // ########### Load Accounts into HashMap/To Memory
+    public void loadAccountsToMemory() {
+        List<Account> accsList = AccRepoInstance.getAllAccounts();
+        hmAccounts.clear();  // clear old data before loading new
+        for (Account acc : accsList) {
+            hmAccounts.put(acc.getAccNumber(), acc);
+        }
+    }
+    public void displayAccounts() {
+        if (hmAccounts.isEmpty()) {
+            System.out.println("⚠️ No accounts available.");
+        } else {
+            for (Account acc : hmAccounts.values()) {
+                System.out.println("\n" + acc);
+            }
+        }
+    }
     // ########### Generate  Account number inorder to create an account
     private static final Random random = new Random();
     public static String generateUniqueAccountNumber(Connection conn) {
+        /* this will generate account number which is not
+           already used (do not exist in a database for another customer's account) used */
         String accountNumber;
         int maxAttempts = 100;
         for (int i = 0; i < maxAttempts; i++) { // Generate a random 10-digit number
@@ -59,7 +71,8 @@ public class AccountService {
     // ### Create and store a new account
     public boolean createAccount(String name, double balance, String email, String phoneNumber, String accountType) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-            String newAccNumber = generateUniqueAccountNumber(conn);
+            String newAccNumber = generateUniqueAccountNumber(conn); // this will generate account number which is not
+            // already used (do not exist in a database for another customer's account) used
             Account newAccount = new Account(newAccNumber, name, balance, email, phoneNumber, accountType);
             // Insert to DB (call DAO or write logic here)
             AccountRepository.insertAccount(conn, newAccount);
@@ -72,8 +85,14 @@ public class AccountService {
     }
     // ########### Delete account by account number
     public boolean deleteAccount(String accNumber) {
-        AccountRepository.deleteAccountFromDB(accNumber); // delete from app.database table as well
-        return hmAccounts.remove(accNumber) != null;
+        Account acc = getAccountByAccNum(accNumber);
+        if (acc != null) {
+            AccountRepository.deleteAccountFromDB(accNumber); // delete from app.database table as well
+            return hmAccounts.remove(accNumber) != null;
+        } else {
+            System.out.println("⚠️ Account not found.");
+            return false;
+        }
     }
     // ########### Get a single account by account number
     public Account getAccountByAccNum(String accNumber) {
@@ -132,6 +151,8 @@ public class AccountService {
         // Update Account
         return updateAccount(existingAcc);
     }
+
+    // ############ Deposit Amount balance
      public boolean deposit(String accountNum, double amount) {
          try (Connection conn = DatabaseManager.getDatabaseConnection()) {
              Account acc = getAccountByAccNum(accountNum);
@@ -147,21 +168,39 @@ public class AccountService {
              return false;
          }
     }
-    // ########### Load Accounts into HashMap/To Memory
-    public void loadAccountsToMemory() {
-        List<Account> accsList = AccRepoInstance.getAllAccounts();
-        hmAccounts.clear();  // clear old data before loading new
-        for (Account acc : accsList) {
-            hmAccounts.put(acc.getAccNumber(), acc);
-        }
-    }
-    public void displayAccounts() {
-        if (hmAccounts.isEmpty()) {
-            System.out.println("⚠️ No accounts available.");
-        } else {
-            for (Account acc : hmAccounts.values()) {
-                System.out.println("\n" + acc);
+    // Withdraw Amount balance
+    public boolean withdraw(String accountNum, double withdrawAmount) {
+        try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+            Account account = getAccountByAccNum(accountNum);
+            if (account == null) {
+                System.out.println("❌ Account not found.");
+                return false;
             }
+            if (withdrawAmount <= 0) {
+                System.out.println("❌ Withdrawal amount must be greater than zero.");
+                return false;
+            }
+            if (account.getBalance() < withdrawAmount) {
+                System.out.println("❌ Insufficient balance.");
+                return false;
+            }
+            // Update balance
+            double newBalance = account.getBalance() - withdrawAmount;
+            account.setBalance(newBalance);
+            // Update balance in database
+            boolean withdrawSuccess = AccountRepository.updateAccountInDB(account, conn);
+            if (withdrawSuccess) {
+                // Update in-memory HashMap (not strictly necessary if reference is same)
+                hmAccounts.put(accountNum, account);
+                System.out.println("✅ Withdrawal successful. New balance: $" + newBalance);
+                return true;
+            } else {
+                System.out.println("❌ Failed to update account in database.");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
     // ### Save all accounts to file
