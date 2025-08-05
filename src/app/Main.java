@@ -106,7 +106,7 @@ public class Main {
                     break;
                 case 8: //Withdraw money
                     try {
-                        String accNumberWithdraw = InputValidator.readValidAccNumber("Enter Account Number to withdraw money");
+                        String accNumberWithdraw = InputValidator.readValidAccNumber("Enter Account Number to withdraw money: ");
                         String prompt ="Enter amount to withdraw: ";
                         double amount = InputValidator.readDoubleInRange(prompt,10.00, 10_000_000.00);
                         boolean success = accountService.withdraw(accNumberWithdraw, amount);

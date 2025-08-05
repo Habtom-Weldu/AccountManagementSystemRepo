@@ -169,23 +169,29 @@ public class AccountService {
          }
     }
     // Withdraw Amount balance
-    public boolean withdraw(String accountNum, double withdrawAmount) {
+    public boolean withdraw(String accountNum, double amountToWithdraw) {
         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
             Account account = getAccountByAccNum(accountNum);
             if (account == null) {
                 System.out.println("❌ Account not found.");
                 return false;
             }
-            if (withdrawAmount <= 0) {
+            double currentBalance = account.getBalance();
+            double minimumBalance = 10.0;
+            if (amountToWithdraw <= 0) {
                 System.out.println("❌ Withdrawal amount must be greater than zero.");
                 return false;
             }
-            if (account.getBalance() < withdrawAmount) {
+            if (amountToWithdraw > currentBalance) {
                 System.out.println("❌ Insufficient balance.");
                 return false;
             }
+            if((account.getBalance() - amountToWithdraw) < minimumBalance){
+                System.out.println("❌ Withdrawal would drop balance below the minimum allowed of $" + minimumBalance);
+                return false;
+            }
             // Update balance
-            double newBalance = account.getBalance() - withdrawAmount;
+            double newBalance = account.getBalance() - amountToWithdraw;
             account.setBalance(newBalance);
             // Update balance in database
             boolean withdrawSuccess = AccountRepository.updateAccountInDB(account, conn);
