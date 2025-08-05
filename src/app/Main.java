@@ -51,7 +51,7 @@ public class Main {
                                 "Enter phone number (international format): ", ExistenceChecker::checkIfPhoneExists);
                         String accountType = InputValidator.readValidAccountType("Enter Account Type " +
                                 "(Savings/Checking/Business): ");
-                        double initialBalance = InputValidator.readBalanceForAccountType("Enter initial balance ",
+                        double initialBalance = InputValidator.readBalanceForAccType("Enter initial balance ",
                                 accountType);
                         // Create the account — all DB logic is inside accountService.createAccount(..) method
                         accountService.createAccount(name, initialBalance, email, phoneNo, accountType);
@@ -106,8 +106,8 @@ public class Main {
                     try {
                         String accNumberDeposit = InputValidator.readValidAccNumber("Enter Account Number to deposit money: ");
                         String prompt ="Enter amount to deposit: ";
-                        double amount = InputValidator.readDoubleInRange(prompt,1.00, 10_000_000.00);
-                        boolean success = accountService.deposit(accNumberDeposit, amount);
+                        double amountToDeposit = InputValidator.readMoneyAmount(prompt,1.00, 10_000_000.00);
+                        boolean success = accountService.deposit(accNumberDeposit, amountToDeposit);
                     } catch (GoBackToMainMenuException e) {
                         System.out.println("↩️ Going back to main menu...");
                         continue; // loop again, to display the main menu
@@ -117,7 +117,7 @@ public class Main {
                     try {
                         String accNumberWithdraw = InputValidator.readValidAccNumber("Enter Account Number to withdraw money: ");
                         String prompt ="Enter amount to withdraw: ";
-                        double amount = InputValidator.readDoubleInRange(prompt,1.00, 10_000_000.00);
+                        double amount = InputValidator.readMoneyAmount(prompt,1.00, 10_000_000.00);
                         boolean success = accountService.withdraw(accNumberWithdraw, amount);
                     } catch (GoBackToMainMenuException e) {
                         System.out.println("↩️ Going back to main menu...");

@@ -147,7 +147,7 @@ public class AccountService {
             existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(), ExistenceChecker::checkIfPhoneExists);
           existingAcc.setPhoneNumber(phone);
         // Balance
-        existingAcc.setBalance(InputValidator.readBalanceOrDefault(existingAcc.getAccountType(),
+        existingAcc.setBalance(InputValidator.readBalanceOrDefaultForAccType(existingAcc.getAccountType(),
                 existingAcc.getBalance()));
         // Update Account
         return updateAccount(existingAcc);
@@ -162,12 +162,8 @@ public class AccountService {
                      return false;
                  }
                  double currentBalance = acc.getBalance();
-                 if (amountToDeposit <= 0) {
-                     System.out.println("❌ Deposit amount must be greater than zero.");
-                     return false;
-                 }
                  if (amountToDeposit < 1.0) {
-                     System.out.println("❌ Minimum deposit is $1.00.");
+                     System.out.println("❌ Minimum allowed deposit is $1.00.");
                      return false;
                  }
                  if (amountToDeposit > 10000.0) {
