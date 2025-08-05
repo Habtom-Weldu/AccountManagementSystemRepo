@@ -28,11 +28,12 @@ public class AccountService {
     public AccountService() {
         loadAccountsToMemory(); // load accounts into the program
     }
+
     // Create Instance of AccountRepository
     /* We can call instance methods like 'getAllAccounts' in AccountRepository,
        by creating instance of the class having instance method in it*/
     private AccountRepository AccRepoInstance = new AccountRepository();
-    public AccountService(AccountRepository repo) { // constructor that accepts
+    public AccountService(AccountRepository repo) { // constructor that accepts AccountRepository reference
         this.AccRepoInstance = repo; // now we can use AccRepoInstance to call instance methods in AccountRepository.java
     }
     // ########### Load Accounts into HashMap/To Memory
@@ -153,20 +154,44 @@ public class AccountService {
     }
 
     // ############ Deposit Amount balance
-     public boolean deposit(String accountNum, double amount) {
-         try (Connection conn = DatabaseManager.getDatabaseConnection()) {
-             Account acc = getAccountByAccNum(accountNum);
-             if (acc == null || amount <= 0) return false;
-             acc.setBalance(acc.getBalance() + amount);
-             boolean depositSuccess = AccountRepository.updateAccountInDB(acc, conn);
-             if (depositSuccess) {
-                 hmAccounts.put(accountNum, acc); // To update in-memory HashMap as well
+     public boolean deposit(String accountNum, double amountToDeposit) {
+             try (Connection conn = DatabaseManager.getDatabaseConnection()) {
+                 Account acc = getAccountByAccNum(accountNum);
+                 if (acc == null) {
+                     System.out.println("❌ Account not found.");
+                     return false;
+                 }
+                 double currentBalance = acc.getBalance();
+                 if (amountToDeposit <= 0) {
+                     System.out.println("❌ Deposit amount must be greater than zero.");
+                     return false;
+                 }
+                 if (amountToDeposit < 1.0) {
+                     System.out.println("❌ Minimum deposit is $1.00.");
+                     return false;
+                 }
+                 if (amountToDeposit > 10000.0) {
+                     System.out.println("❌ Maximum allowed per deposit is $10,000.00");
+                     return false;
+                 }
+                 // Update balance
+                 double newBalance = currentBalance + amountToDeposit;
+                 acc.setBalance(newBalance);
+                 // Update balance in database
+                 boolean depositSuccess = AccountRepository.updateAccountInDB(acc, conn);
+                 if (depositSuccess) {
+                     // Update in-memory HashMap (not strictly necessary if reference is same)
+                     hmAccounts.put(accountNum, acc);
+                     System.out.println("✅ Deposit successful. New balance: $" + newBalance);
+                     return true;
+                 } else {
+                     System.out.println("❌ Failed to update account in database.");
+                     return false;
+                 }
+             } catch (SQLException e) {
+                 e.printStackTrace();
+                 return false;
              }
-             return depositSuccess;
-         } catch (SQLException e) {
-             e.printStackTrace();
-             return false;
-         }
     }
     // Withdraw Amount balance
     public boolean withdraw(String accountNum, double amountToWithdraw) {
@@ -178,20 +203,25 @@ public class AccountService {
             }
             double currentBalance = account.getBalance();
             double minimumBalance = 10.0;
-            if (amountToWithdraw <= 0) {
-                System.out.println("❌ Withdrawal amount must be greater than zero.");
+
+            if (amountToWithdraw < 1.0) {
+                System.out.println("❌ Minimum withdraw is $1.00.");
                 return false;
             }
             if (amountToWithdraw > currentBalance) {
                 System.out.println("❌ Insufficient balance.");
                 return false;
             }
-            if((account.getBalance() - amountToWithdraw) < minimumBalance){
+            if((currentBalance - amountToWithdraw) < minimumBalance){
                 System.out.println("❌ Withdrawal would drop balance below the minimum allowed of $" + minimumBalance);
                 return false;
             }
+            if (amountToWithdraw > 10000.0) {
+                System.out.println("❌ Maximum allowed per withdraw is $10,000.00");
+                return false;
+            }
             // Update balance
-            double newBalance = account.getBalance() - amountToWithdraw;
+            double newBalance = currentBalance - amountToWithdraw;
             account.setBalance(newBalance);
             // Update balance in database
             boolean withdrawSuccess = AccountRepository.updateAccountInDB(account, conn);

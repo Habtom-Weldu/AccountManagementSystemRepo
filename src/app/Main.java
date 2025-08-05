@@ -103,12 +103,21 @@ public class Main {
                     //accountService.saveAccount(newAcc);
                     break;
                 case 7: // Deposit
+                    try {
+                        String accNumberDeposit = InputValidator.readValidAccNumber("Enter Account Number to deposit money: ");
+                        String prompt ="Enter amount to deposit: ";
+                        double amount = InputValidator.readDoubleInRange(prompt,1.00, 10_000_000.00);
+                        boolean success = accountService.deposit(accNumberDeposit, amount);
+                    } catch (GoBackToMainMenuException e) {
+                        System.out.println("↩️ Going back to main menu...");
+                        continue; // loop again, to display the main menu
+                    }
                     break;
                 case 8: //Withdraw money
                     try {
                         String accNumberWithdraw = InputValidator.readValidAccNumber("Enter Account Number to withdraw money: ");
                         String prompt ="Enter amount to withdraw: ";
-                        double amount = InputValidator.readDoubleInRange(prompt,10.00, 10_000_000.00);
+                        double amount = InputValidator.readDoubleInRange(prompt,1.00, 10_000_000.00);
                         boolean success = accountService.withdraw(accNumberWithdraw, amount);
                     } catch (GoBackToMainMenuException e) {
                         System.out.println("↩️ Going back to main menu...");
