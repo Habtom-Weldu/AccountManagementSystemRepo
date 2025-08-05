@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import app.util.FileManager;
 
 public class DatabaseManager {
+    /* We can also expand this with methods like:
+       beginTransaction(), commit(), rollback(), close(Statement stmt),
+       close(ResultSet rs) to handle more JDBC resources and logging()
+     */
     private static final String DB_URL;
 
     static {
@@ -14,7 +18,7 @@ public class DatabaseManager {
     }
 
     public static Connection getDatabaseConnection() {
-        // check for SQLite JDBC driver exist
+        // check for SQLite JDBC driver existence
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
@@ -30,9 +34,21 @@ public class DatabaseManager {
             return null;
         }
     }
+    /* This below method is kept as a helper for future flexibility to close a database manually.
+    * i.e. when not using try-catch with resources that close any resources automatically.*/
+    public static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.err.println("❌ Failed to close DB connection: " + e.getMessage());
+            }
+        }
+    }
+
     /*
     // This class will handle connecting to SQLite app.database file.
-    // private static final String DB_URL = "jdbc:sqlite:accountsDB.db"; // stored in project root
+    // Private static final String DB_URL = "jdbc:sqlite:accountsDB.db"; // stored in project root
     private static final String DB_FILE_PATH = "data/accountsDB.db";
 
     public static Connection getConnection() throws SQLException {
@@ -45,7 +61,6 @@ public class DatabaseManager {
             // Build the correct SQLite connection string
             String url = "jdbc:sqlite:" + DB_FILE_PATH;
             System.out.println("📍 Connecting to DB at: " + new File(DB_FILE_PATH).getAbsolutePath());
-
             return DriverManager.getConnection(url);
         } catch (SQLException e) {
             System.err.println("❌ Failed to connect to DB: " + e.getMessage());

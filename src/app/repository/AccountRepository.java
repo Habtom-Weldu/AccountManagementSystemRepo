@@ -40,7 +40,7 @@ public class AccountRepository {
             return false;
         }
     }
-    public static boolean updateAccount(Account updatedAccount, Connection conn) throws SQLException {
+    public static boolean updateAccountInDB(Account updatedAccount, Connection conn) throws SQLException {
         String sql = "UPDATE accountsTable SET name = ?, balance = ?, email = ?, phoneNumber = ? WHERE accNumber = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, updatedAccount.getName());
