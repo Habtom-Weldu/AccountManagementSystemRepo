@@ -41,13 +41,12 @@ public class AccountRepository {
         }
     }
     public static boolean updateAccountInDB(Account updatedAccount, Connection conn) throws SQLException {
-        String sql = "UPDATE accountsTable SET name = ?, balance = ?, email = ?, phoneNumber = ? WHERE accNumber = ?";
+        String sql = "UPDATE accountsTable SET name = ?, email = ?, phoneNumber = ? WHERE accNumber = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, updatedAccount.getName());
-            ps.setDouble(2, updatedAccount.getBalance());
-            ps.setString(3, updatedAccount.getEmail());
-            ps.setString(4, updatedAccount.getPhoneNumber());
-            ps.setString(5, updatedAccount.getAccNumber());
+            ps.setString(2, updatedAccount.getEmail());
+            ps.setString(3, updatedAccount.getPhoneNumber());
+            ps.setString(4, updatedAccount.getAccNumber());
             return ps.executeUpdate() > 0;
         } catch (Exception e){
             // SQLite constraint violation code is "SQLITE_CONSTRAINT" (error code 19)

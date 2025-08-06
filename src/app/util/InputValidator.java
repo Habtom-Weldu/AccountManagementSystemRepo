@@ -328,7 +328,7 @@ public class InputValidator {
                 continue;
             }
             if(!isValidCurrencyFormat(input)){
-                System.out.println("❌ Invalid number format or more than 2 decimal places.");
+                System.out.println("⚠️ Please enter a valid amount (numeric, and up to 2 decimal places).");
                 continue;
             }
             if (!isDoubleInRange(input, min,max)){
@@ -338,24 +338,22 @@ public class InputValidator {
             return Double.parseDouble(input);
         }
     }
-    public static double readBalanceOrDefaultForAccType(String accountType, double currentBalance) throws GoBackToMainMenuException {
-        double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
-        double max = 10_000_000;
-        String prompt = String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
-                "current (%.2f): ", min, max, currentBalance);
-        double defaultValue = currentBalance;
-
+    public static double readMoneyAmount(String prompt, double min, double max) throws GoBackToMainMenuException {
+        double value;
+        String fullPrompt = String.format(prompt + "(%.2f - %.2f) or press Enter to keep " +
+                "current (%.2f): ", min, max);
         while (true) {
-            System.out.print(prompt);
+            System.out.print(fullPrompt);
             String input = sc.nextLine().trim();
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
             }
             if (input.isEmpty()) {
-                return defaultValue; // Accept current balance as default if entry is empty.
+                System.out.println("⚠️ Input cannot be empty. Please enter a number.");
+                continue;
             }
             if(!isValidCurrencyFormat(input)){
-                System.out.println("❌ Invalid number format or more than 2 decimal places.");
+                System.out.println("⚠️ Please enter a valid amount (numeric, and up to 2 decimal places).");
                 continue;
             }
             if (!isDoubleInRange(input, min,max)){
@@ -385,22 +383,22 @@ public class InputValidator {
             return false;
         }
     }
-    public static double readMoneyAmount(String prompt, double min, double max) throws GoBackToMainMenuException {
-        double value;
-        String fullPrompt = String.format(prompt + "(%.2f - %.2f) or press Enter to keep " +
-                "current (%.2f): ", min, max);
+    public static double readBalanceOrDefaultForAccType(String accountType, double currentBalance) throws GoBackToMainMenuException {
+        double min = hmAccTypeMinBalances.getOrDefault(accountType, 0.0);
+        double max = 10_000_000;
+        String prompt = String.format("Enter new balance (%.2f - %.2f) or press Enter to keep " +
+                "current (%.2f): ", min, max, currentBalance);
         while (true) {
-            System.out.print(fullPrompt);
+            System.out.print(prompt);
             String input = sc.nextLine().trim();
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
             }
             if (input.isEmpty()) {
-                System.out.println("⚠️ Input cannot be empty. Please enter a number.");
-                continue;
+                return currentBalance; // Accept current balance as default if entry is empty.
             }
             if(!isValidCurrencyFormat(input)){
-                System.out.println("❌ Invalid number format or more than 2 decimal places.");
+                System.out.println("❌ Please enter a valid amount (numeric, and up to 2 decimal places).");
                 continue;
             }
             if (!isDoubleInRange(input, min,max)){
@@ -410,7 +408,6 @@ public class InputValidator {
             return Double.parseDouble(input);
         }
     }
-
     /* public static double readDoubleInRange(String prompt, double min, double max) throws GoBackToMainMenuException {
         double value;
         while (true) {

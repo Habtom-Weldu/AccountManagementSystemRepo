@@ -147,8 +147,8 @@ public class AccountService {
             existingAcc.getPhoneNumber() + "): ", existingAcc.getPhoneNumber(), ExistenceChecker::checkIfPhoneExists);
           existingAcc.setPhoneNumber(phone);
         // Balance
-        existingAcc.setBalance(InputValidator.readBalanceOrDefaultForAccType(existingAcc.getAccountType(),
-                existingAcc.getBalance()));
+        /*existingAcc.setBalance(InputValidator.readBalanceOrDefaultForAccType(existingAcc.getAccountType(),
+                existingAcc.getBalance())); //account balance should be updated via deposit and withdraw methods only */
         // Update Account
         return updateAccount(existingAcc);
     }
