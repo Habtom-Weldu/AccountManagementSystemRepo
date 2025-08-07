@@ -10,7 +10,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InputValidator {
-    private static final Scanner sc = new Scanner(System.in);
+    private static Scanner sc = new Scanner(System.in); // Default for real usage
+    // Allow injecting custom Scanner for testing
+    public static void setScanner(Scanner customScanner) {
+        sc = customScanner;
+    }
 
     public static int readIntInRange(int min, int max, String prompt) {
         int input;
