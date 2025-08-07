@@ -1,4 +1,7 @@
-package app;
+package app.util;
+import org.junit.jupiter.api.Test;
+import java.util.Scanner;
+import static org.junit.jupiter.api.Assertions.*;
 public class InputValidatorTest {
     @Test
     public void testReadIntInRange_validInput() {
