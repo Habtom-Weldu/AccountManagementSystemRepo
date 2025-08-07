@@ -1,4 +1,5 @@
 package app.util;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,5 +12,9 @@ public class InputValidatorTest {
 
         int result = InputValidator.readIntInRange(1, 5, "Enter a number: ");
         assertEquals(4, result);
+    }
+    @AfterEach
+    void restoreScanner() {
+        InputValidator.resetScanner();
     }
 }
