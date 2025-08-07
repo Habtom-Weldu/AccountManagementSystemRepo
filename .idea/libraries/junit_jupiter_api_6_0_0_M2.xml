@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="junit-jupiter-api-6.0.0-M2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/junit-jupiter-api-6.0.0-M2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
