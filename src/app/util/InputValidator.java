@@ -1,6 +1,7 @@
 package app.util;
 
 import app.exceptions.GoBackToMainMenuException;
+import org.junit.jupiter.api.AfterEach;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -14,6 +15,9 @@ public class InputValidator {
     // Allow injecting custom Scanner for testing
     public static void setScanner(Scanner customScanner) {
         sc = customScanner;
+    }
+    public static void resetScanner() {
+        sc = new Scanner(System.in);
     }
 
     public static int readIntInRange(int min, int max, String prompt) {
