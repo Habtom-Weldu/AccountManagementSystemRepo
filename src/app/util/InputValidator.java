@@ -1,8 +1,6 @@
 package app.util;
 
 import app.exceptions.GoBackToMainMenuException;
-import org.junit.jupiter.api.AfterEach;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -84,7 +82,10 @@ public class InputValidator {
         }
     }
     public static boolean isValidName(String name) {
-        String input;
+        if(name == null){
+            System.out.println("❗ Name can't be null.");
+            return false;
+        }
         // Unicode-aware regex: first char is a letter, rest are letters, space, hyphen, apostrophe
         Pattern namePattern = Pattern.compile("^\\p{L}[\\p{L}\\-' ]*$", Pattern.UNICODE_CHARACTER_CLASS);
         // Disallowed consecutive symbols
