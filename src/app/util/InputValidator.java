@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class InputValidator {
     private static Scanner sc = new Scanner(System.in); // Default for real usage
     // Allow injecting custom Scanner for testing
-    public static void setScanner(Scanner customScanner) {
+    public static void setScanner(Scanner customScanner) { // will be used from the test class
         sc = customScanner;
     }
     public static void resetScanner() {
