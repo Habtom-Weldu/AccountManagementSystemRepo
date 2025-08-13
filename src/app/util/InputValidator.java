@@ -20,6 +20,7 @@ public class InputValidator {
 
     public static int readIntInRange(int min, int max, String prompt) {
         int input;
+        // <orderEntry type="library" name="junit.jupiter" level="project" />
         while (true) {
             System.out.print(prompt);
             try {

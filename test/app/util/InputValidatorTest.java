@@ -20,7 +20,8 @@ public class InputValidatorTest {
     void restoreScanner() {
         InputValidator.resetScanner();
     }
-    /*@Test
+
+    @Test
     public void testIsValidName(){
         // ✅ Valid names
         assertTrue(InputValidator.isValidName("John"), "Single valid name should pass");
@@ -31,7 +32,7 @@ public class InputValidatorTest {
         assertFalse(InputValidator.isValidName(""), "Empty name should fail");
         assertFalse(InputValidator.isValidName(null), "Null name should fail");
         assertFalse(InputValidator.isValidName("John@Doe"), "Name with special characters should fail");
-    } */
+    }
     @ParameterizedTest
     @ValueSource(strings = {
             "John",
