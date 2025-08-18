@@ -16,6 +16,48 @@ public class InputValidatorTest {
     void restoreScanner() {
         InputValidator.resetScanner();
     }
+    // ----------------------------
+    // Tests for readValidName method
+    // ----------------------------
+    //@DisplayName("Valid name entered on first try")
+    @ParameterizedTest
+    @CsvSource({
+            "'John', John",                   // valid on first try
+            "'J8hn\nAlice', Alice",           // invalid then valid
+            "'back', exception"               // user chooses back
+    })
+    void testReadValidName(String simulatedInput, String expected) {
+        Scanner testScanner = new Scanner(simulatedInput);
+        InputValidator.setScanner(testScanner);
+
+        if ("exception".equals(expected)) {
+            assertThrows(GoBackToMainMenuException.class,
+                    () -> InputValidator.readValidName("Enter name: "));
+        } else {
+            String result = assertDoesNotThrow(
+                    () -> InputValidator.readValidName("Enter name: "));
+            assertEquals(expected, result);
+        }
+    }
+    // ----------------------------
+    // Tests for readValidNameOrDefault
+    // ----------------------------
+    @ParameterizedTest
+    @CsvSource({
+            "'\n', CurrentName",             // press Enter → keep current name
+            "'Alice', Alice",                // valid name
+            "'J9hn\nBob', Bob"               // invalid first, then valid
+    })
+    void testReadValidNameOrDefault(String simulatedInput, String expected) {
+        Scanner testScanner = new Scanner(simulatedInput);
+        InputValidator.setScanner(testScanner);
+
+        String result = assertDoesNotThrow(
+                () -> InputValidator.readValidNameOrDefault("Enter name: ", "CurrentName"));
+        assertEquals(expected, result);
+    }
+
+    /*//##### Test code for readIntInRange()
     //@DisplayName("Test for readIntInRange")
     @Test
     public void testReadIntInRange_invalidThenValidInput() {
@@ -37,9 +79,9 @@ public class InputValidatorTest {
             "'123\nde89012378\n4567890123\n', 4567890123"    // short first, then invalid, finally valid
     })
     void testReadValidAccNumber(String simulatedInput, String expected) throws GoBackToMainMenuException {
-        /* Simulate user entering a valid account number (first try), followed by an invalid account number.
+        *//* Simulate user entering a valid account number (first try), followed by an invalid account number.
         Note: The method under test will prompt twice — once for the first input and again after printing the
-        error message.This is expected behavior. */
+        error message.This is expected behavior. *//*
         Scanner testScanner = new Scanner(simulatedInput);
         InputValidator.setScanner(testScanner);
 
@@ -79,7 +121,7 @@ public class InputValidatorTest {
         assertFalse(InputValidator.isValidName(strName),
                 () -> "Expected invalid name, but got valid: " + strName); // this message will display if and only if
         // the assertion is failed.
-    }
+    }*/
 
     // Below is a sample method that can fail tests
     /*@ParameterizedTest
