@@ -83,8 +83,8 @@ public class InputValidator {
         }
     }
     public static boolean isValidName(String name) {
-        if(name == null){
-            System.out.println("❗ Name can't be null.");
+        if(name == null || name.isEmpty()){
+            System.out.println("❗ Name can't be null or empty.");
             return false;
         }
         // Unicode-aware regex: first char is a letter, rest are letters, space, hyphen, apostrophe
@@ -176,6 +176,10 @@ public class InputValidator {
         }
     }
     public static boolean isValidEmail(String email) {
+        if (email == null || email.isEmpty()){
+            System.out.println("⚠️ Email can not be null or empty.");
+            return false;
+        }
         // Strict but realistic regex
         //String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$";
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
