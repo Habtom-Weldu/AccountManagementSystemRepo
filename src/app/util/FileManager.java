@@ -7,8 +7,27 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class FileManager {
-    private static final Properties props = new Properties();
 
+    private static final String DEFAULT_DB = "data/accountsDB.db";
+    private static final Properties props = new Properties();
+    private static String dbPath;
+    static {
+        try (FileInputStream fis = new FileInputStream("config.properties")) {
+            props.load(fis);
+            String rawPath = props.getProperty("accountDatabase.file.path", DEFAULT_DB);
+            dbPath = Paths.get(System.getProperty("user.dir"), rawPath).toString();
+        } catch (IOException e) {
+            System.err.println("Could not load config.properties, using default path.");
+            dbPath = Paths.get(System.getProperty("user.dir"), DEFAULT_DB).toString();
+        }
+    }
+
+    public static String getDatabaseFilePath() {
+        System.out.println(dbPath);
+         return dbPath;
+    }
+
+    /*private static final Properties props = new Properties();
     static {
         try (InputStream input = new FileInputStream("config.properties")) {
             props.load(input);
@@ -25,7 +44,7 @@ public class FileManager {
     public static String getDatabaseFilePath() {
         String rawPath = props.getProperty("accountDatabase.file.path", "data/accountsDB.db");
         return Paths.get(rawPath).toString();
-    }
+    }*/
 
      /*
     // Folder and file name constants

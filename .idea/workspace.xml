@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ba22924-6253-4245-b7c4-7b7dfb4255a4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/sqlite_jdbc_3_50_2_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AccountManagementSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/AccountManagementSystem.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/util/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/util/FileManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
