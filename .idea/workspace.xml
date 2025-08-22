@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7ba22924-6253-4245-b7c4-7b7dfb4255a4" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/util/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/util/FileManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +22,43 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="dev" />
+                    <option name="lastUsedInstant" value="1755890275" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/unit-tests" />
+                    <option name="lastUsedInstant" value="1755890175" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/input-validation" />
+                    <option name="lastUsedInstant" value="1755890150" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/configurable-db-path" />
+                    <option name="lastUsedInstant" value="1755889037" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/deposit-withdraw" />
+                    <option name="lastUsedInstant" value="1755853120" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -59,7 +95,7 @@
     "ignore.virus.scanning.warn.message": "true",
     "jdk.selected.JAVA_MODULE": "21",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/media/habtom/myDATA-2/project/Account Management System/libs/sqlite-jdbc-3.49.1.0.jar",
+    "last_opened_file_path": "/media/habtom/myDATA-2/project/Account Management System",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
