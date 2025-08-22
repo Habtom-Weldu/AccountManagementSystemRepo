@@ -23,7 +23,7 @@ public class FileManager {
     }
 
     public static String getDatabaseFilePath() {
-        System.out.println(dbPath);
+        //System.out.println(dbPath);
          return dbPath;
     }
 
