@@ -62,9 +62,13 @@ public class InputValidator {
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException();
             }
-            if (isValidName(input)) {
-                return input;
+
+            ValidationResult result = isValidName(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
+                continue;
             }
+            return input;
         }
     }
     public static String readValidNameOrDefault(String prompt, String currentName) throws GoBackToMainMenuException {
@@ -75,17 +79,19 @@ public class InputValidator {
                 throw new GoBackToMainMenuException();
             }
             if (input.isEmpty()) {
-                return currentName; // Keep current if no new input
+                return currentName; // Keep current if no new input accordinly
             }
-            if (isValidName(input)) {
-                return input;
+            ValidationResult result = isValidName(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
+                continue;
             }
+            return input;
         }
     }
-    public static boolean isValidName(String name) {
+    public static ValidationResult isValidName(String name) {
         if(name == null || name.isEmpty()){
-            System.out.println("❗ Name can't be null or empty.");
-            return false;
+            return ValidationResult.fail("❗ Name can't be null or empty.");
         }
         // Unicode-aware regex: first char is a letter, rest are letters, space, hyphen, apostrophe
         Pattern namePattern = Pattern.compile("^\\p{L}[\\p{L}\\-' ]*$", Pattern.UNICODE_CHARACTER_CLASS);
@@ -93,8 +99,7 @@ public class InputValidator {
         String[] invalidSequences = { "--", "''", "  ", "-'", "'-", "' ", " -", " -", "''", "--" };
         // Length check
         if (name.length() < 2 || name.length() > 70) {
-            System.out.println("❗ Name must be between 2 and 70 characters.");
-            return false;
+            return ValidationResult.fail ("❗ Name must be between 2 and 70 characters.");
         }
         // Check for consecutive invalid patterns
         boolean hasInvalid = false;
@@ -105,20 +110,17 @@ public class InputValidator {
             }
         }
         if (hasInvalid) {
-            System.out.println("❗ Name contains invalid consecutive symbols like '--', `''`, or double space.");
-            return false;
+          return ValidationResult.fail("❗ Name contains invalid consecutive symbols like '--', `''`, or double space.");
         }
         if (name.endsWith("-") || name.endsWith("'") || name.endsWith(" ")) {
-            System.out.println("⚠️ Name cannot end with a hyphen, apostrophe, or space.");
-            return false;
+            return ValidationResult.fail("⚠️ Name cannot end with a hyphen, apostrophe, or space.");
         }
         // Regex check
         Matcher inputMatcher = namePattern.matcher(name);
         if (!inputMatcher.matches()) {
-            System.out.println("❗ Name must start with a letter and contain only letters, spaces, hyphens (-), or apostrophes (').");
-            return false;
+            return ValidationResult.fail("❗ Name must start with a letter and contain only letters, spaces, hyphens (-), or apostrophes (').");
         }
-        return true;
+        return ValidationResult.ok();
     }
 
     // ############ Read Valid Email
@@ -139,7 +141,9 @@ public class InputValidator {
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException();
             }
-            if (!isValidEmail(input)) {
+            ValidationResult result = isValidEmail(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
                 continue;
             }
             if (isDuplicateCheck.apply(input)){//this will apply to "checkIfEmailExists" method in ExistenceChecker.java.
@@ -164,7 +168,9 @@ public class InputValidator {
             if (input.isEmpty()){
                 return currentEmail;
             }
-            if (!isValidEmail(input)) {
+            ValidationResult result = isValidEmail(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
                 continue;
             }
             // Only perform duplicate check if input is different from currentEmail
@@ -175,48 +181,41 @@ public class InputValidator {
             return input; // valid and not duplicated
         }
     }
-    public static boolean isValidEmail(String email) {
+
+    public static ValidationResult isValidEmail(String email) {
         if (email == null || email.isEmpty()){
-            System.out.println("⚠️ Email can not be null or empty.");
-            return false;
+            return ValidationResult.fail("⚠️ Email cannot be empty or null.");
         }
         // Strict but realistic regex
         //String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$";
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
         Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
         if (email.length() < 5) {
-            System.out.println("⚠️ Email cannot be less than 5 characters.");
-            return false;
+            return ValidationResult.fail("⚠️ Email cannot be less than 5 characters.");
         }
         if (email.length() > 254) {
-            System.out.println("⚠️ Email is too long. Must be 254 characters or fewer.");
-            return false;
+            return ValidationResult.fail("⚠️ Email is too long. Must be 254 characters or fewer.");
         }
         String[] partsArr = email.split("@",3);
         if (partsArr.length != 2) {
-            System.out.println("⚠️ Email must contain a single '@' character.");
-            return false;
+            return ValidationResult.fail("⚠️ Email must contain a single '@' character.");
         }
         String emailLocalPart = partsArr[0]; //String domainPart = partsArr[1]; // for domain part
         // Local part
         if (emailLocalPart.length() > 64) {
-            System.out.println("⚠️ Local part (before @) must be 64 characters or fewer.");
-            return false;
+            return ValidationResult.fail("⚠️ Local part (before @) must be 64 characters or fewer.");
         }
         char firstChar = emailLocalPart.charAt(0);
         if (!Character.isLetterOrDigit(firstChar)) {
-            System.out.println("⚠️ Local part must start with a letter or digit.");
-            return false;
+            return ValidationResult.fail("⚠️ Local part must start with a letter or digit.");
         }
         char lastLocalChar = emailLocalPart.charAt(emailLocalPart.length() - 1);
         if (lastLocalChar == '.' || lastLocalChar == '-' || lastLocalChar == '_' || lastLocalChar == '+') {
             System.out.println("⚠️ Email Local part cannot end with special characters (., -, _, +).");
-            return false;
         }
         if (email.contains("..") || email.contains("--") || email.contains("@@") || email.contains("''") ||
                 email.contains("++")) {
-            System.out.println("⚠️ Email cannot contain consecutive special characters like .., --, @@ or ++");
-            return false;
+            return ValidationResult.fail("⚠️ Email cannot contain consecutive special characters like .., --, @@ or ++");
         }
         // Domain parts of the email
         String domain = email.substring(email.indexOf('@') + 1);
@@ -229,16 +228,14 @@ public class InputValidator {
             }
         }
         if (invalidDomainLabel) {
-            System.out.println("⚠️ Domain labels cannot be empty or start/end with hyphens.");
-            return false;
+            return ValidationResult.fail("⚠️ Domain labels cannot be empty or start/end with hyphens.");
         }
         // Regex matching checking
         if (!pattern.matcher(email).matches()) {
             //return email;
-            System.out.println("⚠️ Invalid email format.");
-            return false;
+            return ValidationResult.fail("⚠️ Invalid email format.");
         }
-        return true;
+        return ValidationResult.ok();
     }
     // ############ Read Valid Phone number
     public static String readValidPhoneNumber(String prompt, Function<String, Boolean> isDuplicateCheck)
