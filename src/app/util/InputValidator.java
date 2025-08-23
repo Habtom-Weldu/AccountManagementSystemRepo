@@ -187,9 +187,9 @@ public class InputValidator {
             return ValidationResult.fail("⚠️ Email cannot be empty or null.");
         }
         // Strict but realistic regex
-        //String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$";
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
         Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
+        // Check length
         if (email.length() < 5) {
             return ValidationResult.fail("⚠️ Email cannot be less than 5 characters.");
         }
@@ -202,6 +202,9 @@ public class InputValidator {
         }
         String emailLocalPart = partsArr[0]; //String domainPart = partsArr[1]; // for domain part
         // Local part
+        if (emailLocalPart.isEmpty()){
+            return ValidationResult.fail("⚠️ Local part (before @) can not be empty.");
+        }
         if (emailLocalPart.length() > 64) {
             return ValidationResult.fail("⚠️ Local part (before @) must be 64 characters or fewer.");
         }
