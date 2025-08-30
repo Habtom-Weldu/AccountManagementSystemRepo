@@ -187,7 +187,7 @@ public class InputValidator {
             return ValidationResult.fail("⚠️ Email cannot be empty or null.");
         }
         // Strict but realistic regex
-        //String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$";
+        /*String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$"; */
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
         Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
         if (email.length() < 5) {
@@ -237,6 +237,7 @@ public class InputValidator {
         }
         return ValidationResult.ok();
     }
+
     // ############ Read Valid Phone number
     public static String readValidPhoneNumber(String prompt, Function<String, Boolean> isDuplicateCheck)
            throws GoBackToMainMenuException {
@@ -247,13 +248,9 @@ public class InputValidator {
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
             }
-            if (!input.startsWith("+") || !input.substring(1).matches("\\d+")) {
-                System.out.println("⚠️ Invalid format. Must start with '+' and contain only digits.");
-                continue;
-            }
-            int length = input.length() - 1;
-            if (length < 10 || length > 15) {
-                System.out.println("⚠️ Phone number must be between 10 and 15 digits.");
+            ValidationResult result = isValidPhoneNumber(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
                 continue;
             }
             /* the following code will call the isPhoneNumberExists() method in AccountService — indirectly — through
@@ -274,17 +271,12 @@ public class InputValidator {
             if (input.equalsIgnoreCase("back")) {
                 throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
             }
-            int length = input.length() - 1;
             if (input.isEmpty()) {
                 return currentPhone;  // Keep existing
             }
-            else if (length < 10 || length > 15) {
-                System.out.println("⚠️ Phone number must be between 10 and 15 digits.");
-                continue;
-            }
-            // Validate format (reuse your existing validator logic if you have)
-            if (!input.startsWith("+") || !input.substring(1).matches("\\d+")) {
-                System.out.println("⚠️ Invalid format. Must start with '+' and contain only digits.");
+            ValidationResult result = isValidPhoneNumber(input);
+            if (!result.isValid()) {
+                System.out.println(result.getMessage());
                 continue;
             }
             // Only check DB existence if different from current
@@ -296,6 +288,21 @@ public class InputValidator {
             }
             return input;
         }
+    }
+
+    public static ValidationResult isValidPhoneNumber(String phoneNum){
+        if (phoneNum == null || phoneNum.isEmpty()){
+            return ValidationResult.fail("⚠️ Phone number cannot be empty or null.");
+        }
+        // Validate format (reuse your existing validator logic if you have)
+        if (!phoneNum.startsWith("+") || !phoneNum.substring(1).matches("\\d+")) {
+            return ValidationResult.fail("⚠️ Invalid format. Must start with '+' and contain only digits.");
+        }
+        int length = phoneNum.length() - 1;
+        if (length < 10 || length > 15) {
+            return ValidationResult.fail("⚠️ Phone number must be between 10 and 15 digits.");
+        }
+        return ValidationResult.ok();
     }
 
     // ############ Read Valid Account type
