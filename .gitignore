@@ -1,10 +1,47 @@
- ================================
-# Java artifacts
-# ================================
+# -----------------------------------
+# IntelliJ IDEA project files
+# -----------------------------------
+.idea/
+*.iml
+out/
+# IntelliJ caches
+.idea/modules.xml
+.idea/libraries/
+
+# -----------------------------------
+# OS-specific files
+# -----------------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------------
+# Build artifacts
+# -----------------------------------
 *.class
 *.jar
 *.war
 *.ear
+*.zip
+*.tar.gz
+
+# -----------------------------------
+# Logs & temp files
+# -----------------------------------
+*.log
+*.tmp
+
+# -----------------------------------
+# SQLite database files
+# -----------------------------------
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+
+# -----------------------------------
+# Misc
+# -----------------------------------
+/target/
 
 # ================================
 # IntelliJ IDEA
@@ -18,11 +55,6 @@
 .idea/usage.statistics.xml
 # Generated project files
 .idea/*.iml
-*.iml
-out/
-# IntelliJ caches
-.idea/modules.xml
-.idea/libraries/
 
 # ================================
 # Build output
@@ -32,19 +64,12 @@ build/
 bin/
 
 # ================================
-# Logs
-# ================================
-*.log
-
-# ================================
 # OS-specific files
 # ================================
 # macOS
-.DS_Store
 .AppleDouble
 .LSOverride
 # Windows
-Thumbs.db
 Desktop.ini
 # Linux
 *~
