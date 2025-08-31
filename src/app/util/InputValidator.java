@@ -187,7 +187,6 @@ public class InputValidator {
             return ValidationResult.fail("⚠️ Email cannot be empty or null.");
         }
         // Strict but realistic regex
-        /*String emailRegex = "^(?!\\.)[A-Za-z0-9+_.-]{1,64}(?<!\\.)@(?!-)([A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$"; */
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
         Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
         if (email.length() < 5) {
@@ -232,7 +231,6 @@ public class InputValidator {
         }
         // Regex matching checking
         if (!pattern.matcher(email).matches()) {
-            //return email;
             return ValidationResult.fail("⚠️ Invalid email format.");
         }
         return ValidationResult.ok();
@@ -294,7 +292,7 @@ public class InputValidator {
         if (phoneNum == null || phoneNum.isEmpty()){
             return ValidationResult.fail("⚠️ Phone number cannot be empty or null.");
         }
-        // Validate format (reuse your existing validator logic if you have)
+        // Validate format
         if (!phoneNum.startsWith("+") || !phoneNum.substring(1).matches("\\d+")) {
             return ValidationResult.fail("⚠️ Invalid format. Must start with '+' and contain only digits.");
         }

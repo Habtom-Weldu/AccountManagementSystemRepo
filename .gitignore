@@ -6,9 +6,17 @@
 # -----------------------------------
 # IntelliJ IDEA project files
 # -----------------------------------
+# User-specific stuff (do NOT share)
 .idea/
 *.iml
 out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/usage.statistics.xml
+# Generated project files
+.idea/*.iml
 # IntelliJ caches
 .idea/modules.xml
 .idea/libraries/
@@ -47,19 +55,6 @@ data/*.db-wal
 # Misc
 # -----------------------------------
 /target/
-
-# ================================
-# IntelliJ IDEA
-# ================================
-
-# User-specific stuff (do NOT share)
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries/
-.idea/shelf/
-.idea/usage.statistics.xml
-# Generated project files
-.idea/*.iml
 
 # ================================
 # Build output
