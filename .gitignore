@@ -1,4 +1,9 @@
 # -----------------------------------
+# Custom local data
+# -----------------------------------
+/data/               # all runtime data files (like SQLite DBs, temp exports, etc.)
+
+# -----------------------------------
 # IntelliJ IDEA project files
 # -----------------------------------
 .idea/
