@@ -32,7 +32,7 @@ public class InputValidator {
                     System.out.println("❗ Please enter a number between " + min + " and " + max);
                 }
             } catch (NumberFormatException e) {
-                System.out.println("❗ Invalid input. Please enter a valid integer.");
+                System.out.println("❗ Invalid input. Please enter a valid integer. " + e.getMessage());
             }
         }
     }
@@ -188,7 +188,7 @@ public class InputValidator {
         }
         // Strict but realistic regex
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
-        Pattern pattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
+        Pattern emailPattern = Pattern.compile(emailRegex, Pattern.CASE_INSENSITIVE);
         if (email.length() < 5) {
             return ValidationResult.fail("⚠️ Email cannot be less than 5 characters.");
         }
@@ -199,8 +199,11 @@ public class InputValidator {
         if (partsArr.length != 2) {
             return ValidationResult.fail("⚠️ Email must contain a single '@' character.");
         }
-        String emailLocalPart = partsArr[0]; //String domainPart = partsArr[1]; // for domain part
         // Local part
+        String emailLocalPart = partsArr[0]; //String domainPart = partsArr[1]; // for domain part
+        if (emailLocalPart.isEmpty()) {
+            return ValidationResult.fail("⚠️ Local part (before @) cannot be empty.");
+        }
         if (emailLocalPart.length() > 64) {
             return ValidationResult.fail("⚠️ Local part (before @) must be 64 characters or fewer.");
         }
@@ -216,8 +219,11 @@ public class InputValidator {
                 email.contains("++")) {
             return ValidationResult.fail("⚠️ Email cannot contain consecutive special characters like .., --, @@ or ++");
         }
-        // Domain parts of the email
+        // Domain part of the email
         String domain = email.substring(email.indexOf('@') + 1);
+        if (domain.isEmpty()) {
+            return ValidationResult.fail("⚠️ Domain part (after @) cannot be empty.");
+        }
         String[] domainPartArr = domain.split("\\.");
         boolean invalidDomainLabel = false;
         for (String part : domainPartArr) {
@@ -229,8 +235,8 @@ public class InputValidator {
         if (invalidDomainLabel) {
             return ValidationResult.fail("⚠️ Domain labels cannot be empty or start/end with hyphens.");
         }
-        // Regex matching checking
-        if (!pattern.matcher(email).matches()) {
+        // Regex matching check
+        if (!emailPattern.matcher(email).matches()) {
             return ValidationResult.fail("⚠️ Invalid email format.");
         }
         return ValidationResult.ok();
@@ -376,7 +382,11 @@ public class InputValidator {
                 System.out.printf("⚠️ Please enter a value between %.2f and %.2f.%n", min, max);
                 continue;
             }
-            return Double.parseDouble(input);
+            try{
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Please enter a valid amount. " + e.getMessage());
+            }
         }
     }
     public static boolean isDoubleInRange(String input, double min, double max) {
@@ -424,30 +434,6 @@ public class InputValidator {
             return Double.parseDouble(input);
         }
     }
-    /* public static double readDoubleInRange(String prompt, double min, double max) throws GoBackToMainMenuException {
-        double value;
-        while (true) {
-            System.out.print(prompt);
-            String input = sc.nextLine().trim();
-            if (input.equalsIgnoreCase("back")) {
-                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
-            }
-            if (input.isEmpty()) {
-                System.out.println("⚠️ Input cannot be empty. Please enter a number.");
-                continue;
-            }
-            try {
-                value = Double.parseDouble(input);
-                if (value < min || value > max) {
-                    System.out.printf("⚠️ Please enter a number between %.2f and %.2f.%n", min, max);
-                } else {
-                    return value;
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("⚠️ Invalid number. Please enter a valid numeric value.");
-            }
-        }
-    } */
 
     // ############ Read Valid Positive Double value
     public static double readPositiveDouble(String prompt) {
@@ -500,4 +486,28 @@ public class InputValidator {
             }
         }
     }
+    /* public static double readDoubleInRange(String prompt, double min, double max) throws GoBackToMainMenuException {
+        double value;
+        while (true) {
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
+            if (input.equalsIgnoreCase("back")) {
+                throw new GoBackToMainMenuException(); // this will be handled and used to go back to the main menu option in Main.java
+            }
+            if (input.isEmpty()) {
+                System.out.println("⚠️ Input cannot be empty. Please enter a number.");
+                continue;
+            }
+            try {
+                value = Double.parseDouble(input);
+                if (value < min || value > max) {
+                    System.out.printf("⚠️ Please enter a number between %.2f and %.2f.%n", min, max);
+                } else {
+                    return value;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Invalid number. Please enter a valid numeric value.");
+            }
+        }
+    } */
 }
