@@ -15,7 +15,7 @@ public class InputValidatorEmailTest {
                 () -> "Failed for input: " + input + " with message: " + result.getMessage());
     }
 
-    private static Stream<org.junit.jupiter.params.provider.Arguments> provideEmailsForValidation() {
+    private static Stream<Arguments> provideEmailsForValidation() {
         String strEmailLocalPart = "A".repeat(64);
         String strEmailDomainPart = "B".repeat(185) + ".com";
         String strEmailMaxValid = strEmailLocalPart + "@" + strEmailDomainPart; // total = 64 + 1 + 189 + 4 = 254
@@ -34,6 +34,7 @@ public class InputValidatorEmailTest {
                 org.junit.jupiter.params.provider.Arguments.of("abc", false),
                 org.junit.jupiter.params.provider.Arguments.of("missingatsign.com", false),       // missing '@'
                 org.junit.jupiter.params.provider.Arguments.of("@nouser.com", false),            // missing local part
+                org.junit.jupiter.params.provider.Arguments.of("nodomain.com@", false),
                 org.junit.jupiter.params.provider.Arguments.of("user@@domain.com", false),       // double @@ is not allowed
                 org.junit.jupiter.params.provider.Arguments.of("user@.com", false),              // domain starts with dot
                 org.junit.jupiter.params.provider.Arguments.of("user@domain", false),            // missing TLD
