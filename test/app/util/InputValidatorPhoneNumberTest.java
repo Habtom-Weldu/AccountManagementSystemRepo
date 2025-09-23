@@ -22,7 +22,7 @@ public class InputValidatorPhoneNumberTest {
                 Arguments.of("+251911223344", true),      // Ethiopia
                 Arguments.of("+919876543210", true),      // India
                 Arguments.of("+4915123456789", true),     // Germany
-
+                Arguments.of("   +14155552671   ", true), // trims (if method trims)
                 // ❌ Invalid numbers
                 Arguments.of("14155552671", false),       // missing +
                 Arguments.of("+", false),                 // only +
@@ -30,7 +30,6 @@ public class InputValidatorPhoneNumberTest {
                 Arguments.of("+123456", false),           // too short
                 Arguments.of("+1234567890123456", false), // too long (16 digits)
                 Arguments.of("+251-911223344", false),    // contains dash
-                Arguments.of("   +14155552671   ", true), // trims (if your method trims)
 
                 // Edge cases
                 Arguments.of(null, false),

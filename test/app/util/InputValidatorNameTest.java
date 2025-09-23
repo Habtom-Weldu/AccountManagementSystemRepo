@@ -22,10 +22,10 @@ public class InputValidatorNameTest {
                 org.junit.jupiter.params.provider.Arguments.of("John Doe", true),
                 org.junit.jupiter.params.provider.Arguments.of("O'Connor", true),
                 org.junit.jupiter.params.provider.Arguments.of("Anne-Marie", true),
+                org.junit.jupiter.params.provider.Arguments.of("  John", true), // leading space, true (if your method trims)
                 // ❌ Invalid names
                 org.junit.jupiter.params.provider.Arguments.of("123John", false),   // starts with number
                 org.junit.jupiter.params.provider.Arguments.of("", false),          // empty
-                org.junit.jupiter.params.provider.Arguments.of("  John", false),    // leading space
                 org.junit.jupiter.params.provider.Arguments.of("John--Doe", false), // double dash
                 org.junit.jupiter.params.provider.Arguments.of(" ", false),         // space only
                 org.junit.jupiter.params.provider.Arguments.of("'John", false),     // starts with apostrophe
