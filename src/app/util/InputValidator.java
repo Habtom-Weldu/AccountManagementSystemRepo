@@ -89,9 +89,13 @@ public class InputValidator {
             return input;
         }
     }
-    public static ValidationResult isValidName(String name) {
-        if(name == null || name.isEmpty()){
-            return ValidationResult.fail("❗ Name can't be null or empty.");
+    public static ValidationResult isValidName(String namePassed) {
+        if(namePassed == null){
+            return ValidationResult.fail("❗ Name can't be null.");
+        }
+        String name = namePassed.trim();
+        if(name.isEmpty()){
+            return ValidationResult.fail("❗ Name can't be empty.");
         }
         // Unicode-aware regex: first char is a letter, rest are letters, space, hyphen, apostrophe
         Pattern namePattern = Pattern.compile("^\\p{L}[\\p{L}\\-' ]*$", Pattern.UNICODE_CHARACTER_CLASS);
@@ -182,9 +186,13 @@ public class InputValidator {
         }
     }
 
-    public static ValidationResult isValidEmail(String email) {
-        if (email == null || email.isEmpty()){
-            return ValidationResult.fail("⚠️ Email cannot be empty or null.");
+    public static ValidationResult isValidEmail(String emailPassed) {
+        if (emailPassed == null ) {
+            return ValidationResult.fail("⚠️ Email cannot be null.");
+        }
+        String email = emailPassed.trim();
+        if (email.isEmpty()){
+            return ValidationResult.fail("⚠️ Email cannot be empty.");
         }
         // Strict but realistic regex
         String emailRegex = "^[A-Za-z0-9][A-Za-z0-9._+-]*@[A-Za-z0-9-]+(\\.[A-Za-z]{2,})+$";
@@ -294,10 +302,15 @@ public class InputValidator {
         }
     }
 
-    public static ValidationResult isValidPhoneNumber(String phoneNum){
-        if (phoneNum == null || phoneNum.isEmpty()){
-            return ValidationResult.fail("⚠️ Phone number cannot be empty or null.");
+    public static ValidationResult isValidPhoneNumber(String phoneNumPassed){
+        if (phoneNumPassed == null){
+            return ValidationResult.fail("⚠️ Phone number cannot be null.");
         }
+        String phoneNum = phoneNumPassed.trim();
+        if (phoneNum.isEmpty()){
+            return ValidationResult.fail("⚠️ Phone number cannot be empty.");
+        }
+
         // Validate format
         if (!phoneNum.startsWith("+") || !phoneNum.substring(1).matches("\\d+")) {
             return ValidationResult.fail("⚠️ Invalid format. Must start with '+' and contain only digits.");
