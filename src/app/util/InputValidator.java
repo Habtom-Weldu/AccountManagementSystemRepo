@@ -302,8 +302,12 @@ public class InputValidator {
         if (!phoneNum.startsWith("+") || !phoneNum.substring(1).matches("\\d+")) {
             return ValidationResult.fail("⚠️ Invalid format. Must start with '+' and contain only digits.");
         }
-        int length = phoneNum.length() - 1;
-        if (length < 10 || length > 15) {
+        // Country code cannot start with 0
+        if (phoneNum.charAt(1) == '0') {
+            return ValidationResult.fail("⚠️ Country code cannot start with 0.");
+        }
+        int length = phoneNum.length() - 1; // exclude + sign from the length.
+        if (length < 7 || length > 15) {
             return ValidationResult.fail("⚠️ Phone number must be between 10 and 15 digits.");
         }
         return ValidationResult.ok();
