@@ -1,29 +1,90 @@
-### IntelliJ IDEA ###
+# -----------------------------------
+# Custom local data
+# -----------------------------------
+/data/               # all runtime data files (like SQLite DBs, temp exports, etc.)
+
+# -----------------------------------
+# IntelliJ IDEA project files
+# -----------------------------------
+# User-specific stuff (do NOT share)
+.idea/
+*.iml
 out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/usage.statistics.xml
+# Generated project files
+.idea/*.iml
+# IntelliJ caches
+.idea/modules.xml
+.idea/libraries/
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
+# -----------------------------------
+# OS-specific files
+# -----------------------------------
 .DS_Store
+Thumbs.db
+
+# -----------------------------------
+# Build artifacts
+# -----------------------------------
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# -----------------------------------
+# Logs & temp files
+# -----------------------------------
+*.log
+*.tmp
+
+# -----------------------------------
+# SQLite database files
+# -----------------------------------
+data/*.db
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+
+# -----------------------------------
+# Misc
+# -----------------------------------
+/target/
+
+# ================================
+# Build output
+# ================================
+target/
+build/
+bin/
+
+# ================================
+# OS-specific files
+# ================================
+# macOS
+.AppleDouble
+.LSOverride
+# Windows
+Desktop.ini
+# Linux
+*~
+
+# ================================
+# Dependency JARs (keep libs/ clean in repo)
+# ================================
+lib/*.jar
+
+# ================================
+# Default ignored files
+# ================================
+/shelf/
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
