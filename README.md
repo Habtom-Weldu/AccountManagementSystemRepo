@@ -1,0 +1,127 @@
+# Simple Account Management System
+
+This is a simple **Java-based Account Management System** that interacts with a **SQLite app.database** to 
+manage user accounts through a console-based interface. The application allows users to create, view, update,
+and delete accounts, as well as view all existing accounts. Additional features like deposit and withdrawal 
+are planned.
+
+---
+
+## Project Structure
+
+Account Management System/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── data/                 ← contains database or runtime data
+├── src/
+│   └── app/
+│       ├── Main.java     ← main class (entry point)
+│       ├── database/     ← 
+│       ├── model/        ← data models (e.g., Account.java)
+│       ├── service/      ← business logic (e.g., AccountService.java)
+│       ├── repository/   ← database interaction layer
+│       ├── exceptions/   ← custom exception classes
+│       └── util/         ← utility classes (e.g., InputValidator.java)
+
+---
+[Start]
+|
+Login/Register
+|
+[Display Main Menu]
+|
+|--> [1. Create Account] --> [Input User Info] --> [Save to DB/File] --> [Back to Menu]
+|
+|--> [2. View Account] --> [Enter Account ID] --> [Display Details] --> [Back to Menu]
+|
+|--> [3. Update Account] --> [Enter Account ID] --> [Edit Info] --> [Save Changes] --> [Back to Menu]
+|
+|--> [4. Delete Account] --> [Enter Account ID] --> [Confirm Deletion?]
+                            | Yes --> [Delete] --> [Back to Menu]
+                            | No  --> [Back to Menu]
+|
+|--> [5. View All Accounts] --> [Display All Accounts] --> [Back to Menu]
+|
+|--> [6. Deposit] --> [Enter Account ID] --> [Enter Amount] --> [Update Balance] --> [Back to Menu]
+|
+|--> [7. Withdraw] --> [Enter Account ID] --> [Enter Amount] --> [Check Balance > Amount?]
+                                              | Yes --> [Update Balance] --> [Back to Menu]
+                                              | No  --> [Show Error] --> [Back to Menu]
+
+---
+## ✅ Features Implemented
+- Create new bank accounts with required details
+- View a single account by account number
+- View al accounts
+- Delete account by account number
+- Save/load accounts to a app.database.
+- Update account
+    - Update name
+    - Update phone number (validated and uniqueness enforced)
+    - Update email (validated and uniqueness enforced)
+    - Update balance (with account type considerations)
+- Input validations
+- Back-to-menu navigation from any prompt
+- Duplicate checking logic with `ExistenceChecker`
+- Custom exception for menu navigation
+- Clean code structure and separation of concerns
+- Clean separation between a model, service, and UI layers
+---
+## 🔄 Planned Features
+-  Deposit / Withdraw support
+-  Export to CSV (optional)
+-  Account login/authentication system
+-  Unit testing with JUnit
+---
+
+## 🛠️ Technologies Used
+- Java 17
+- Java Collections (HashMap)
+- Object Serialization
+- IntelliJ IDEA
+- Git + GitHub
+- SQLite app.database
+
+# Tech Stack
+| Component      | Description              |
+|----------------|--------------------------|
+| Language       | Java                     |
+| Database       | SQLite                   |
+| Tools/IDE      | IntelliJ IDEA / VS Code  |
+| Version Control| Git & GitHub             |
+
+---
+## Branching Strategy
+
+- `main` – stable, production-ready code
+- `dev` – active development
+- `feature/*` – separate branches for individual features
+
+---
+## How to Run
+1. Clone the repo
+2. Make sure you have Java and SQLite installed
+3. Run `Main.java` in your IDE or terminal
+Database file (`accounts.db`) will be created automatically on first run.
+
+Compile and run the project:
+If using command line: Make sure you're in the root of the project when running these commands.
+ ✅ Compile the code:
+    javac -d out src/app/Main.java
+ ▶️ Run the application:
+    java -cp out app.Main 
+Or open the project in IntelliJ and run src/app/Main.java.
+
+---
+## 🧑‍💻 Author
+
+Habtom Hailay  
+United States  
+Simple and clean Java development with a learning spirit 🚀
+
+---
+📝 License
+MIT License © 2025 Habtom Hailay
+
+---
