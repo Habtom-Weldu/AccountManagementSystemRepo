@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-231.9161.38">
+    <data-source name="identifier.myProSqlite" uuid="fb6c7d61-5bb6-4671-ab77-c3d1eb238368">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="SQLITE" exact-version="0" />
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>
